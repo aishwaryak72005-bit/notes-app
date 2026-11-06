@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-ivory text-charcoal font-sans antialiased;
+    color: #202820;
+    background-color: #F7F3E9;
+  }
+}
+
+/* Custom scrollbars matching forest and ivory theme */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F2F3EF;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #B8CEB3;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #244C35;
+}
+
+/* TipTap Editor Styles */
+.tiptap {
+  outline: none;
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+  color: #737B72;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+/* Code block highlight prism styles */
+pre[class*="language-"] {
+  background: #153B2A !important;
+  color: #F7F3E9 !important;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  font-family: 'Fira Code', Consolas, Monaco, monospace;
+  font-size: 0.9rem;
+  overflow-x: auto;
+}
+
+code[class*="language-"] {
+  font-family: 'Fira Code', Consolas, Monaco, monospace;
+}
