@@ -73,15 +73,6 @@ def auto_bootstrap():
                 trainer.role = 'teacher'
                 trainer.save()
 
-        # 4. Automatically ensure distinct quizzes exist across all tech tracks
-        try:
-            from seed_track_quizzes import seed_quizzes
-            from quizzes.models import Quiz
-            if Quiz.objects.count() < 15:
-                seed_quizzes()
-        except Exception as seed_err:
-            print(f"Quiz auto-seed note: {seed_err}")
-
     except Exception as exc:
         print(f"Auto-bootstrap notice (non-fatal): {exc}")
 

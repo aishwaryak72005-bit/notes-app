@@ -227,11 +227,12 @@ Return valid JSON ONLY without markdown ticks or outer quotes.
         return ai_structured
 
     @staticmethod
-    def parse_and_create_quiz(quiz_title, raw_text, concept=None, user=None):
+    def parse_and_create_quiz(quiz_title, raw_text, concept=None, module=None, user=None):
         """
-        Parses practice question documents and creates Quiz, Questions, and AnswerOptions.
+        Parses practice question documents and creates Quiz, Questions, and AnswerOptions
+        strictly extracted from the uploaded document text. Never invents synthetic questions.
         """
-        blocks = re.split(r'\n\s*(?=(?:Q\d+[\.\:]|\d+[\.\)]))', raw_text.strip())
+        blocks = re.split(r'\n\s*(?=(?:Q\d+[\.\:]|\d+[\.\)]|\bQuestion\s*\d+[\.\:]))', raw_text.strip())
         if not blocks or len(blocks) < 2:
             blocks = [b.strip() for b in raw_text.split('\n\n') if b.strip()]
 
@@ -239,6 +240,7 @@ Return valid JSON ONLY without markdown ticks or outer quotes.
             title=quiz_title,
             description=f"Interactive Practice Quiz for {quiz_title}",
             concept=concept,
+            module=module,
             time_limit_minutes=max(5, min(30, len(blocks) * 2)),
             passing_score_percentage=70,
             difficulty_level='beginner',
@@ -263,9 +265,15 @@ Return valid JSON ONLY without markdown ticks or outer quotes.
             explanation = ''
 
             for line in lines[1:]:
-                ans_match = re.match(r'^(?:Ans|Answer|Correct)[:\s]+([A-Da-d])', line, re.IGNORECASE)
+                ans_match = re.match(r'^(?:Correct\s+Answer|Ans|Answer|Correct)[:\s\-]+([A-Da-d]|True|False)', line, re.IGNORECASE)
                 if ans_match:
-                    correct_letter = ans_match.group(1).upper()
+                    ans_val = ans_match.group(1).upper()
+                    if ans_val == 'TRUE':
+                        correct_letter = 'A'
+                    elif ans_val == 'FALSE':
+                        correct_letter = 'B'
+                    else:
+                        correct_letter = ans_val
                     continue
 
                 exp_match = re.match(r'^(?:Exp|Explanation)[:\s]+(.*)', line, re.IGNORECASE)
@@ -273,15 +281,21 @@ Return valid JSON ONLY without markdown ticks or outer quotes.
                     explanation = exp_match.group(1).strip()
                     continue
 
-                opt_match = re.match(r'^([A-Da-d])[\.\)]\s*(.*)', line)
+                opt_match = re.match(r'^(?:([A-Da-d])[\.\)]|\(([A-Da-d])\))\s*(.*)', line)
                 if opt_match:
-                    letter = opt_match.group(1).upper()
-                    opt_text = opt_match.group(2).strip()
+                    letter = (opt_match.group(1) or opt_match.group(2)).upper()
+                    opt_text = opt_match.group(3).strip()
                     options.append((letter, opt_text))
 
             if not options:
-                options = [('A', 'True'), ('B', 'False')]
-                correct_letter = 'A'
+                ans_tf = re.search(r'^(?:Correct\s+Answer|Ans|Answer|Correct)[:\s\-]+(True|False)', block, re.IGNORECASE | re.MULTILINE)
+                if ans_tf:
+                    options = [('A', 'True'), ('B', 'False')]
+                    correct_letter = 'A' if ans_tf.group(1).lower() == 'true' else 'B'
+
+            if len(options) < 2:
+                # Strictly require real choices from the document; do not invent fake options
+                continue
 
             question = Question.objects.create(
                 quiz=quiz,
@@ -300,6 +314,10 @@ Return valid JSON ONLY without markdown ticks or outer quotes.
                     is_correct=(letter == correct_letter),
                     order=idx + 1
                 ))
+
+        if created_questions == 0:
+            quiz.delete()
+            return None, 0
 
         if options_to_create:
             AnswerOption.objects.bulk_create(options_to_create)
@@ -478,20 +496,23 @@ Return valid JSON ONLY without markdown ticks or outer quotes.
                     # Check if Practice Quiz vs Concept Note
                     if cls.is_question_document(filename, extracted_text):
                         quiz_title = f"{clean_concept_title} Practice Quiz"
+                        quiz_concept = target_module.concepts.first()
                         quiz, q_count = cls.parse_and_create_quiz(
                             quiz_title=quiz_title,
                             raw_text=extracted_text,
-                            concept=None,
+                            concept=quiz_concept,
+                            module=target_module,
                             user=user
                         )
-                        results["quizzes_created"] += 1
-                        results["questions_created"] += q_count
-                        results["items_processed"].append({
-                            "type": "quiz",
-                            "title": quiz_title,
-                            "questions": q_count,
-                            "file": filename
-                        })
+                        if quiz and q_count > 0:
+                            results["quizzes_created"] += 1
+                            results["questions_created"] += q_count
+                            results["items_processed"].append({
+                                "type": "quiz",
+                                "title": quiz_title,
+                                "questions": q_count,
+                                "file": filename
+                            })
                     else:
                         concept_order = target_module.concepts.count() + 1
                         concept_slug = slugify(clean_concept_title) or f"concept-{concept_order}"
@@ -548,6 +569,25 @@ Return valid JSON ONLY without markdown ticks or outer quotes.
                             "file": filename,
                             "download_url": download_url
                         })
+
+                        # If the uploaded lesson document has embedded practice questions,
+                        # extract and link a quiz directly to this specific concept & module
+                        has_embedded_questions = bool(re.search(
+                            r'(?:\b(?:Practice Questions?|Self Test|Review Questions?|Exercises?|Quiz Questions?)\b|\bQ\d+[\.\:])',
+                            extracted_text,
+                            re.IGNORECASE
+                        ))
+                        if has_embedded_questions:
+                            embedded_quiz, eq_count = cls.parse_and_create_quiz(
+                                quiz_title=f"{clean_concept_title} Quiz",
+                                raw_text=extracted_text,
+                                concept=concept,
+                                module=target_module,
+                                user=user
+                            )
+                            if embedded_quiz and eq_count > 0:
+                                results["quizzes_created"] += 1
+                                results["questions_created"] += eq_count
 
             results["success"] = True
 

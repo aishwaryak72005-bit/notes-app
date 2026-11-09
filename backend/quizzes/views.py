@@ -29,6 +29,14 @@ class QuizViewSet(viewsets.ModelViewSet):
         concept_id = self.request.query_params.get('concept_id')
         module_id = self.request.query_params.get('module_id')
         if concept_id:
+            from content.models import Concept
+            conc = Concept.objects.filter(id=concept_id).first()
+            if conc and conc.module_id:
+                concept_qs = qs.filter(concept_id=concept_id)
+                if concept_qs.exists():
+                    return concept_qs
+                # Fallback to the uploaded practice quiz for this module
+                return qs.filter(module_id=conc.module_id)
             qs = qs.filter(concept_id=concept_id)
         elif module_id:
             qs = qs.filter(module_id=module_id)
