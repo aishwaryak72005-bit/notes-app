@@ -4,10 +4,12 @@ import json
 import zipfile
 import tempfile
 import shutil
+import gc
 from pathlib import Path
 from django.conf import settings
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+from django.core.files import File
 from django.utils.text import slugify
 
 from .models import TechnologyCategory, Technology, Module, Concept, Note
@@ -38,40 +40,62 @@ class ZipCourseIngestionService:
     @staticmethod
     def extract_text_from_file(file_path):
         """
-        Extracts plain text and code blocks from various document formats.
+        Extracts plain text and code blocks from various document formats
+        with strict memory limits and page caps to protect 512MB RAM servers.
         """
         ext = os.path.splitext(file_path)[1].lower()
         extracted_text = ""
 
         try:
-            if ext == '.docx' and docx:
+            file_size_mb = os.path.getsize(file_path) / (1024 * 1024)
+            # If file is larger than 20MB, do not load entire content stream into memory
+            if file_size_mb > 20:
+                return f"Large document resource: {os.path.basename(file_path)}. Complete document is attached below for download."
+
+            if ext in ['.docx', '.doc'] and docx:
                 doc = docx.Document(file_path)
                 lines = []
-                for p in doc.paragraphs:
+                for p in doc.paragraphs[:80]:
                     t = p.text.strip()
                     if t:
                         lines.append(t)
-                for table in doc.tables:
-                    for row in table.rows:
+                    if sum(len(x) for x in lines) > 25000:
+                        break
+                for table in doc.tables[:3]:
+                    for row in table.rows[:15]:
                         row_text = " | ".join([cell.text.strip() for cell in row.cells if cell.text.strip()])
                         if row_text:
                             lines.append(row_text)
                 extracted_text = "\n\n".join(lines)
 
             elif ext == '.pdf' and pypdf:
-                reader = pypdf.PdfReader(file_path)
-                pages_text = []
-                for page in reader.pages:
-                    txt = page.extract_text()
-                    if txt:
-                        pages_text.append(txt.strip())
-                extracted_text = "\n\n".join(pages_text)
+                try:
+                    reader = pypdf.PdfReader(file_path)
+                    pages_text = []
+                    total_pages = len(reader.pages)
+                    # Limit to first 12 pages to stay well under 512MB RAM
+                    pages_to_read = min(12, total_pages)
+                    for i in range(pages_to_read):
+                        try:
+                            txt = reader.pages[i].extract_text()
+                            if txt:
+                                pages_text.append(txt.strip())
+                            if sum(len(x) for x in pages_text) > 25000:
+                                break
+                        except Exception:
+                            continue
+                    extracted_text = "\n\n".join(pages_text)
+                    del reader
+                    gc.collect()
+                except Exception as pdf_err:
+                    print(f"PDF extraction error: {pdf_err}")
+                    extracted_text = ""
 
             elif ext == '.ipynb':
                 with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
                     nb_data = json.load(f)
                 cells_text = []
-                cells = nb_data.get('cells', [])
+                cells = nb_data.get('cells', [])[:60]
                 for cell in cells:
                     cell_type = cell.get('cell_type')
                     source = "".join(cell.get('source', [])).strip()
@@ -81,11 +105,13 @@ class ZipCourseIngestionService:
                         cells_text.append(source)
                     elif cell_type == 'code':
                         cells_text.append(f"```python\n{source}\n```")
+                    if sum(len(x) for x in cells_text) > 25000:
+                        break
                 extracted_text = "\n\n".join(cells_text)
 
             elif ext in ['.txt', '.md', '.markdown', '.rst']:
                 with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
-                    extracted_text = f.read()
+                    extracted_text = f.read(30000)
 
             elif ext in ['.py', '.js', '.jsx', '.ts', '.tsx', '.sql', '.html', '.css', '.java', '.cpp', '.c']:
                 lang = ext.replace('.', '')
@@ -94,7 +120,7 @@ class ZipCourseIngestionService:
                 elif lang in ['py']:
                     lang = 'python'
                 with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
-                    code_content = f.read()
+                    code_content = f.read(25000)
                 extracted_text = f"```{lang}\n{code_content}\n```"
 
         except Exception as e:
@@ -414,10 +440,10 @@ Return valid JSON ONLY without markdown ticks or outer quotes.
                 if not extracted_text:
                     continue
 
-                # Save original file as downloadable media asset
+                # Save original file as downloadable media asset (streamed without loading into memory)
                 media_rel_path = f"course_materials/{tech.slug}/{slugify(target_module.title)}/{filename}"
                 with open(full_p, 'rb') as orig_f:
-                    saved_path = default_storage.save(media_rel_path, ContentFile(orig_f.read()))
+                    saved_path = default_storage.save(media_rel_path, File(orig_f))
                 download_url = f"{settings.MEDIA_URL}{saved_path}"
                 results["attached_files"] += 1
 
@@ -497,6 +523,8 @@ Return valid JSON ONLY without markdown ticks or outer quotes.
                         "file": filename,
                         "download_url": download_url
                     })
+
+                gc.collect()
 
             results["success"] = True
 
