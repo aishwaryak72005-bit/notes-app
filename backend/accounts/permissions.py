@@ -6,11 +6,11 @@ class IsStudent(permissions.BasePermission):
 
 class IsTeacher(permissions.BasePermission):
     def has_permission(self, request, view):
-        return bool(request.user and request.user.is_authenticated and (request.user.role == 'teacher' or request.user.is_superuser))
+        return bool(request.user and request.user.is_authenticated and (request.user.role in ['teacher', 'admin'] or request.user.is_superuser))
 
 class IsPlatformAdmin(permissions.BasePermission):
     def has_permission(self, request, view):
-        return bool(request.user and request.user.is_authenticated and (request.user.role == 'admin' or request.user.is_superuser))
+        return bool(request.user and request.user.is_authenticated and (request.user.role in ['admin', 'teacher'] or request.user.is_superuser))
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):

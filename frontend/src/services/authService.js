@@ -49,7 +49,7 @@ export const authService = {
 
   async getStudents() {
     const response = await api.get('auth/students/');
-    return response.data;
+    return response.data.results || response.data;
   },
 
   logout() {

@@ -27,7 +27,7 @@ export const quizService = {
 
   async getAttempts() {
     const res = await api.get('quizzes/attempts/');
-    return res.data;
+    return res.data.results || res.data;
   },
 
   // Teacher methods
@@ -68,7 +68,7 @@ export const quizService = {
 
   async getPracticeQuestions(params = {}) {
     const res = await api.get('quizzes/practice/', { params });
-    return res.data;
+    return res.data.results || res.data;
   },
 
   async checkPracticeAnswer(questionId, selectedOptionId) {

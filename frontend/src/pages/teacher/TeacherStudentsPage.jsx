@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { authService } from '../../services/authService';
 import Loader from '../../components/common/Loader';
 import { Users, Mail, Calendar, CheckCircle2, AlertTriangle, Search, Activity, UserCheck, UserX } from 'lucide-react';
@@ -14,9 +14,11 @@ const TeacherStudentsPage = () => {
       try {
         setLoading(true);
         const data = await authService.getStudents();
-        setStudents(data);
+        const list = Array.isArray(data) ? data : (data?.results || []);
+        setStudents(list);
       } catch (err) {
-        console.error(err);
+        console.error('Failed to load students:', err);
+        setStudents([]);
       } finally {
         setLoading(false);
       }
@@ -26,17 +28,19 @@ const TeacherStudentsPage = () => {
 
   if (loading) return <Loader message="Loading registered student roster..." />;
 
+  const studentList = Array.isArray(students) ? students : [];
+
   // Assign deterministic demo engagement score based on user id for realistic visibility
   const getStudentStats = (student) => {
-    const idNum = Number(student.id) || 1;
+    const idNum = Number(student?.id) || 1;
     const progressPct = Math.min(95, Math.max(15, (idNum * 27) % 100));
     const isStruggling = progressPct < 45;
     return { progressPct, isStruggling };
   };
 
-  const filtered = students.filter((s) => {
+  const filtered = studentList.filter((s) => {
     const matchesSearch =
-      s.username.toLowerCase().includes(search.toLowerCase()) ||
+      (s.username || '').toLowerCase().includes(search.toLowerCase()) ||
       (s.first_name && s.first_name.toLowerCase().includes(search.toLowerCase())) ||
       (s.email && s.email.toLowerCase().includes(search.toLowerCase()));
 
@@ -46,8 +50,8 @@ const TeacherStudentsPage = () => {
     return matchesSearch;
   });
 
-  const strugglingCount = students.filter((s) => getStudentStats(s).isStruggling).length;
-  const activeCount = students.length - strugglingCount;
+  const strugglingCount = studentList.filter((s) => getStudentStats(s).isStruggling).length;
+  const activeCount = studentList.length - strugglingCount;
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
