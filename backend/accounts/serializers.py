@@ -18,6 +18,12 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         return token
 
     def validate(self, attrs):
+        raw_username = attrs.get('username', '').strip()
+        from django.db.models import Q
+        matched_user = User.objects.filter(Q(username__iexact=raw_username) | Q(email__iexact=raw_username)).first()
+        if matched_user:
+            attrs['username'] = matched_user.username
+
         data = super().validate(attrs)
         # Check if teacher requires approval
         if self.user.role == User.ROLE_TEACHER and not self.user.is_approved_teacher and not self.user.is_superuser:
