@@ -447,6 +447,12 @@ print(age)    # Output: 21"""
         )
         print("[OK] Created Sample Student Progress, Bookmark, and Quiz Attempt (78% score)")
 
+    try:
+        from seed_all_technologies import seed_all_curriculums
+        seed_all_curriculums()
+    except Exception as e:
+        print(f"[WARN] Failed to seed extra curriculums: {e}")
+
     print("[SUCCESS] TechNotes Database Seeding Completed Successfully!")
 
 if __name__ == '__main__':
