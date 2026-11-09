@@ -95,24 +95,21 @@ const ZipUploaderModal = ({ isOpen, onClose, onSuccess, technologies = [] }) => 
     }
 
     try {
-      // Simulate progress stages for user feedback
-      const timer1 = setTimeout(() => {
-        setUploadProgress(40);
-        setCurrentStage('Unpacking folder hierarchy and reading documents (.docx, .pdf, .ipynb)...');
-      }, 1200);
-
-      const timer2 = setTimeout(() => {
-        setUploadProgress(75);
-        setCurrentStage('Gemini AI structuring lessons, code examples & generating practice quizzes...');
-      }, 3500);
-
       const res = await contentService.uploadCourseZip(formData, (progressEvent) => {
-        const percent = Math.round((progressEvent.loaded * 30) / (progressEvent.total || 1));
-        setUploadProgress((prev) => Math.max(prev, percent));
-      });
+        if (progressEvent.total) {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          const mbLoaded = (progressEvent.loaded / (1024 * 1024)).toFixed(1);
+          const mbTotal = (progressEvent.total / (1024 * 1024)).toFixed(1);
 
-      clearTimeout(timer1);
-      clearTimeout(timer2);
+          if (percentCompleted < 100) {
+            setUploadProgress(Math.min(85, Math.round(percentCompleted * 0.85)));
+            setCurrentStage(`Uploading archive (${mbLoaded} MB / ${mbTotal} MB - ${percentCompleted}%)...`);
+          } else {
+            setUploadProgress(90);
+            setCurrentStage('Archive received! Server is unpacking, creating modules, notes & quizzes...');
+          }
+        }
+      });
 
       setUploadProgress(100);
       setCurrentStage('Ingestion complete!');
@@ -123,7 +120,16 @@ const ZipUploaderModal = ({ isOpen, onClose, onSuccess, technologies = [] }) => 
       }
     } catch (err) {
       console.error('ZIP Upload error:', err);
-      const msg = err.response?.data?.error || 'Failed to process course ZIP. Please check file contents.';
+      let msg = 'Failed to process course ZIP. Please check file contents.';
+      if (err.response?.status === 413) {
+        msg = 'The ZIP file exceeds the maximum allowed upload size on the server (100 MB).';
+      } else if (err.response?.data?.error) {
+        msg = err.response.data.error;
+      } else if (err.message && err.message.includes('timeout')) {
+        msg = 'Upload timed out. The server is still processing large files. Please refresh in a moment.';
+      } else if (err.message) {
+        msg = err.message;
+      }
       setError(msg);
     } finally {
       setUploading(false);

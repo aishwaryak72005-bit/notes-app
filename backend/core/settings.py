@@ -178,6 +178,11 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# File upload size limits (allow up to 100 MB for course ZIP archives)
+DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600  # 100 MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 104857600  # 100 MB
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Google Gemini API Key

@@ -121,7 +121,7 @@ class ZipCourseIngestionService:
         return False
 
     @staticmethod
-    def structure_note_with_ai(title, raw_text, detected_language='python'):
+    def structure_note_with_ai(title, raw_text, detected_language='python', skip_ai=False):
         """
         Uses Gemini AI to structure raw extracted text into standard Note fields.
         Includes a resilient fallback heuristic if AI is unavailable.
@@ -133,13 +133,14 @@ class ZipCourseIngestionService:
                 api_key = keys[0]
 
         ai_structured = None
-        if api_key and genai and raw_text:
+        # Only call Gemini if skip_ai is False, text is substantial, and we have an API key
+        if not skip_ai and api_key and genai and raw_text and len(raw_text.strip()) > 30:
             prompt = f"""You are an expert technical course author.
 Transform the following lesson document text into a clean, highly structured educational lesson note.
 
 DOCUMENT TITLE: {title}
 DOCUMENT CONTENT:
-{raw_text[:6000]}
+{raw_text[:4000]}
 
 Extract or generate the following JSON fields:
 - "title": Clean, professional lesson title.
@@ -148,7 +149,7 @@ Extract or generate the following JSON fields:
 - "code_example": Representative code snippet demonstrating the concept.
 - "code_language": Programming language (python, javascript, sql, html, css, etc.).
 - "expected_output": Output produced by the code example.
-- "explanation": Clear, step-by-step conceptual explanation (2-3 paragraphs, plain text or basic HTML).
+- "explanation": Clear, step-by-step conceptual explanation (2-3 paragraphs).
 - "real_world_analogy": A relatable analogy explaining the concept to a beginner.
 - "common_mistakes": 2-3 frequent pitfalls or beginner traps.
 - "important_points": 2-3 key takeaways or best practices.
@@ -158,19 +159,14 @@ Return valid JSON ONLY without markdown ticks or outer quotes.
 """
             try:
                 genai.configure(api_key=api_key.strip())
-                models_to_try = ["gemini-2.5-flash", "gemini-flash-latest", "gemini-1.5-flash"]
-                for m_name in models_to_try:
-                    try:
-                        model = genai.GenerativeModel(m_name)
-                        res = model.generate_content(prompt)
-                        if res and res.text:
-                            cleaned = re.sub(r'```(?:json)?', '', res.text).strip()
-                            ai_structured = json.loads(cleaned)
-                            break
-                    except Exception:
-                        continue
+                model = genai.GenerativeModel("gemini-2.5-flash")
+                res = model.generate_content(prompt, request_options={"timeout": 6.0})
+                if res and res.text:
+                    cleaned = re.sub(r'```(?:json)?', '', res.text).strip()
+                    ai_structured = json.loads(cleaned)
             except Exception as e:
-                print(f"Gemini note structuring exception: {e}")
+                # Fast fallback to heuristic parser below
+                pass
 
         # Fallback heuristic if AI parsing failed or had no key
         if not ai_structured or not isinstance(ai_structured, dict):
@@ -350,8 +346,21 @@ Return valid JSON ONLY without markdown ticks or outer quotes.
 
             module_map = {"": default_module}
 
+            IGNORED_DIRS = {
+                'venv', '.venv', 'env', '.env', '__pycache__', '.git', 'node_modules',
+                'site-packages', '.idea', '.vscode', 'build', 'dist', 'bin', 'include',
+                'lib', 'lib64', '.pytest_cache', '.mypy_cache', 'egg-info', '.tox'
+            }
+
             all_files = []
             for root, dirs, files in os.walk(extracted_root):
+                # Prune unwanted directories in-place so os.walk ignores thousands of venv files
+                dirs[:] = [
+                    d for d in dirs
+                    if d.lower() not in IGNORED_DIRS
+                    and not d.startswith('.')
+                    and not d.startswith('__')
+                ]
                 dirs.sort()
                 files.sort()
                 for file in files:
@@ -455,7 +464,11 @@ Return valid JSON ONLY without markdown ticks or outer quotes.
                     elif 'html' in tech_slug_lower:
                         detected_lang = 'html'
 
-                    note_fields = cls.structure_note_with_ai(clean_concept_title, extracted_text, detected_lang)
+                    if results["notes_created"] < 3:
+                        note_fields = cls.structure_note_with_ai(clean_concept_title, extracted_text, detected_lang)
+                    else:
+                        # Instant heuristic parser for subsequent files to stay well within HTTP timeout
+                        note_fields = cls.structure_note_with_ai(clean_concept_title, extracted_text, detected_lang, skip_ai=True)
 
                     note, _ = Note.objects.update_or_create(
                         concept=concept,
