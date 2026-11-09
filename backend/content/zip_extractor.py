@@ -99,6 +99,22 @@ class ZipCourseIngestionService:
                     print(f"Safe PDF fallback for {clean_name}: {pdf_err}")
                     extracted_text = f"Lecture notes and reference material covering {clean_name}."
 
+            elif ext in ['.pptx', '.ppt']:
+                try:
+                    import zipfile
+                    slide_texts = []
+                    with zipfile.ZipFile(file_path, 'r') as pzf:
+                        slide_files = sorted([f for f in pzf.namelist() if f.startswith('ppt/slides/slide') and f.endswith('.xml')])
+                        for s_file in slide_files[:40]:
+                            xml_content = pzf.read(s_file).decode('utf-8', errors='ignore')
+                            texts = re.findall(r'<a:t[^>]*>(.*?)</a:t>', xml_content)
+                            if texts:
+                                slide_texts.append(" ".join(t.strip() for t in texts if t.strip()))
+                    extracted_text = "\n\n".join(slide_texts) if slide_texts else f"PowerPoint lecture presentation covering {clean_name}."
+                except Exception as ppt_err:
+                    print(f"PPT extraction fallback: {ppt_err}")
+                    extracted_text = f"PowerPoint lecture slides covering {clean_name}."
+
             elif ext == '.ipynb':
                 with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
                     nb_data = json.load(f)
@@ -427,7 +443,7 @@ Return valid JSON ONLY without markdown ticks or outer quotes.
                     all_files.append((full_p, rel_p))
 
             supported_exts = {
-                '.docx', '.pdf', '.ipynb', '.md', '.txt',
+                '.docx', '.pdf', '.pptx', '.ppt', '.ipynb', '.md', '.txt',
                 '.py', '.sql', '.js', '.jsx', '.html', '.css', '.java'
             }
 
@@ -437,10 +453,10 @@ Return valid JSON ONLY without markdown ticks or outer quotes.
                 if ext in supported_exts:
                     valid_files.append((full_p, rel_p, ext))
 
-            # Prioritize rich lesson files (.ipynb, .docx, .pdf, .md)
+            # Prioritize rich lesson files (.ipynb, .docx, .pptx, .pdf, .md)
             def get_priority(item):
                 ext = item[2]
-                if ext in ['.ipynb', '.docx']: return 1
+                if ext in ['.ipynb', '.docx', '.pptx', '.ppt']: return 1
                 if ext in ['.pdf', '.md']: return 2
                 if ext in ['.txt']: return 3
                 return 4

@@ -24,6 +24,7 @@ import {
   Download,
   ExternalLink,
   Lock,
+  Eye,
 } from 'lucide-react';
 
 
@@ -39,6 +40,7 @@ const ConceptLearnPage = () => {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const [markingComplete, setMarkingComplete] = useState(false);
+  const [showDocViewer, setShowDocViewer] = useState(false);
 
   useEffect(() => {
     const fetchConceptNotes = async () => {
@@ -399,29 +401,63 @@ const ConceptLearnPage = () => {
             </div>
           )}
 
-          {/* 9. Downloadable Resource / Cheat Sheet */}
+          {/* 9. Online Document Viewer & Downloadable Resource */}
           {note?.resource_url && (
-            <div className="p-4 rounded-2xl bg-teal-50/80 border border-teal-200/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <span className="text-xs font-bold text-teal-900 block">
-                  Original Document / Jupyter Notebook Resource
-                </span>
-                <span className="text-[11px] text-teal-700 break-all">{note.resource_url}</span>
+            <div className="p-5 rounded-2xl bg-teal-50/80 border border-teal-200/90 space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <span className="text-xs font-bold text-teal-900 block">
+                    Original Study Document ({note.resource_url.split('.').pop().toUpperCase()})
+                  </span>
+                  <span className="text-[11px] text-teal-700 break-all">{note.resource_url}</span>
+                </div>
+
+                <div className="flex items-center space-x-2 self-start sm:self-auto">
+                  <button
+                    onClick={() => setShowDocViewer(!showDocViewer)}
+                    className="inline-flex items-center space-x-1.5 px-3.5 py-2 bg-white hover:bg-teal-100 text-teal-900 text-xs font-semibold rounded-xl border border-teal-300 shadow-xs transition-colors"
+                  >
+                    <Eye className="w-3.5 h-3.5 text-teal-700" />
+                    <span>{showDocViewer ? 'Hide Document Reader' : '📖 Read Online'}</span>
+                  </button>
+
+                  {note.allow_download !== false ? (
+                    <a
+                      href={note.resource_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center space-x-1.5 px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white text-xs font-semibold rounded-xl shadow-xs transition-colors"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>Download</span>
+                    </a>
+                  ) : (
+                    <div className="inline-flex items-center space-x-1.5 px-3 py-2 bg-gray-100 text-gray-600 text-xs font-medium rounded-xl border border-gray-300">
+                      <Lock className="w-3.5 h-3.5 text-gray-500" />
+                      <span>Downloads Restricted</span>
+                    </div>
+                  )}
+                </div>
               </div>
-              {note.allow_download !== false ? (
-                <a
-                  href={note.resource_url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center space-x-1.5 px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white text-xs font-semibold rounded-xl shadow-xs transition-colors self-start sm:self-auto"
-                >
-                  <Download className="w-3.5 h-3.5" />
-                  <span>Download Material</span>
-                </a>
-              ) : (
-                <div className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-medium rounded-xl border border-gray-300 self-start sm:self-auto">
-                  <Lock className="w-3.5 h-3.5 text-gray-500" />
-                  <span>Online Reading Only (Downloads Restricted)</span>
+
+              {/* In-Browser Document Viewer Pane */}
+              {showDocViewer && (
+                <div className="pt-3 border-t border-teal-200/80">
+                  <div className="bg-white rounded-2xl p-2 border border-teal-200 shadow-inner">
+                    <iframe
+                      src={
+                        note.resource_url.toLowerCase().endsWith('.pdf')
+                          ? note.resource_url
+                          : `https://docs.google.com/viewer?url=${encodeURIComponent(
+                              note.resource_url.startsWith('http')
+                                ? note.resource_url
+                                : window.location.origin + note.resource_url
+                            )}&embedded=true`
+                      }
+                      className="w-full h-[520px] rounded-xl border border-gray-200"
+                      title="Online Document Reader"
+                    />
+                  </div>
                 </div>
               )}
             </div>
