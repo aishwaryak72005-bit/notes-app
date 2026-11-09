@@ -65,12 +65,27 @@ const QuizPage = () => {
           }
         }
 
-        // 3. If still no quiz, load the first available quiz as default
+        // 3. Load all available quizzes
         const allQuizzes = await quizService.getQuizzes();
         setAvailableQuizzes(allQuizzes);
 
-        if (!targetQuiz && allQuizzes.length > 0) {
+        // Only default to first quiz if student did not request a specific concept in URL
+        if (!conceptId && !targetQuiz && allQuizzes.length > 0) {
           targetQuiz = allQuizzes[0];
+        }
+
+        if (targetQuiz && targetQuiz.questions) {
+          // Shuffle questions and options so questions don't repeat in the exact same static order
+          const randomizedQuestions = [...targetQuiz.questions]
+            .sort(() => Math.random() - 0.5)
+            .map((q) => ({
+              ...q,
+              options: q.options ? [...q.options].sort(() => Math.random() - 0.5) : [],
+            }));
+          targetQuiz = {
+            ...targetQuiz,
+            questions: randomizedQuestions,
+          };
         }
 
         setQuiz(targetQuiz);
@@ -138,6 +153,17 @@ const QuizPage = () => {
     setResult(null);
     setCurrentIndex(0);
     setTimerSeconds(0);
+    if (quiz && quiz.questions) {
+      setQuiz({
+        ...quiz,
+        questions: [...quiz.questions]
+          .sort(() => Math.random() - 0.5)
+          .map((q) => ({
+            ...q,
+            options: q.options ? [...q.options].sort(() => Math.random() - 0.5) : [],
+          })),
+      });
+    }
   };
 
   if (loading) {
