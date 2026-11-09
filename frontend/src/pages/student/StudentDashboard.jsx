@@ -18,12 +18,14 @@ import {
   ChevronRight,
   PlayCircle,
   FileCode,
+  Megaphone,
 } from 'lucide-react';
 
 const StudentDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [data, setData] = useState(null);
+  const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -32,8 +34,12 @@ const StudentDashboard = () => {
     const fetchDashboard = async () => {
       try {
         setLoading(true);
-        const res = await contentService.getStudentDashboard();
-        setData(res);
+        const [dashRes, annRes] = await Promise.allSettled([
+          contentService.getStudentDashboard(),
+          contentService.getAnnouncements(),
+        ]);
+        if (dashRes.status === 'fulfilled') setData(dashRes.value);
+        if (annRes.status === 'fulfilled') setAnnouncements(annRes.value || []);
       } catch (err) {
         console.error('Failed to load student dashboard:', err);
         setError('Failed to load dashboard data. Please verify the backend is running.');
@@ -44,6 +50,7 @@ const StudentDashboard = () => {
 
     fetchDashboard();
   }, []);
+
 
   const getTechIcon = (techName) => {
     const name = techName.toLowerCase();
@@ -106,6 +113,32 @@ const StudentDashboard = () => {
           </Link>
         </div>
       </div>
+
+      {/* Trainer Broadcast Announcement / Daily Tip */}
+      {announcements.length > 0 && (
+        <div className="bg-gradient-to-r from-amber-500/15 via-amber-500/10 to-transparent p-5 rounded-3xl border border-amber-300 shadow-xs flex items-start space-x-3.5">
+          <div className="w-10 h-10 rounded-2xl bg-amber-500 text-white flex items-center justify-center flex-shrink-0 shadow-sm mt-0.5">
+            <Megaphone className="w-5 h-5" />
+          </div>
+          <div className="flex-1">
+            <div className="flex items-center space-x-2">
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-200 text-amber-900 uppercase tracking-wide">
+                📢 Trainer Broadcast
+              </span>
+              <span className="text-[11px] text-muted">
+                {new Date(announcements[0].created_at).toLocaleDateString()}
+              </span>
+            </div>
+            <h3 className="text-sm sm:text-base font-bold text-forest-dark mt-1">
+              {announcements[0].title}
+            </h3>
+            <p className="text-xs sm:text-sm text-charcoal/80 mt-0.5 leading-relaxed">
+              {announcements[0].message}
+            </p>
+          </div>
+        </div>
+      )}
+
 
       {/* 2. Top Statistics Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">

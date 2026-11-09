@@ -118,4 +118,21 @@ export const contentService = {
     const res = await api.delete(`content/notes/${id}/`);
     return res.data;
   },
+
+  // Announcements
+  async getAnnouncements() {
+    const res = await api.get('content/announcements/');
+    return res.data.results || res.data;
+  },
+
+  async createAnnouncement(data) {
+    const res = await api.post('content/announcements/', data);
+    return res.data;
+  },
+
+  async deleteAnnouncement(id) {
+    const res = await api.delete(`content/announcements/${id}/`);
+    return res.data;
+  },
 };
+

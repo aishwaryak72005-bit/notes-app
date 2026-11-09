@@ -167,3 +167,184 @@ class QuizAttemptListView(APIView):
         attempts = QuizAttempt.objects.filter(student=request.user).select_related('quiz').order_by('-completed_at')
         serializer = QuizAttemptSerializer(attempts, many=True)
         return Response(serializer.data)
+
+
+class GenerateAIQuizView(APIView):
+    permission_classes = [IsTeacher]
+
+    def post(self, request):
+        import os
+        import json
+        import re
+        import google.generativeai as genai
+        from content.models import Note, Concept
+
+        note_id = request.data.get('note_id')
+        concept_id = request.data.get('concept_id')
+        quiz_id = request.data.get('quiz_id')
+        num_questions = int(request.data.get('num_questions', 5))
+
+        note = None
+        if note_id:
+            note = Note.objects.filter(id=note_id).first()
+        elif concept_id:
+            note = Note.objects.filter(concept_id=concept_id).first()
+
+        if not note:
+            return Response({'error': 'Note or Concept not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        api_key = os.getenv('GEMINI_API_KEY', '')
+        if not api_key:
+            return Response({'error': 'GEMINI_API_KEY not configured on server'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        prompt = f"""You are an expert technical interviewer and educator.
+Create a {num_questions}-question multiple-choice technical quiz based on this lesson note:
+
+TOPIC: {note.title}
+DEFINITION: {note.definition}
+SYNTAX & CODE: {note.syntax}
+{note.code_example}
+KEY POINTS & PITFALLS: {note.common_mistakes} {note.important_points}
+
+Generate EXACTLY {num_questions} questions testing conceptual understanding and code behavior.
+Output valid JSON array ONLY. No markdown ticks, no commentary. Example format:
+[
+  {{
+    "question": "What happens when...?",
+    "options": ["Option A", "Option B", "Option C", "Option D"],
+    "correct_index": 1,
+    "explanation": "Option B is correct because..."
+  }}
+]
+"""
+        generated_data = []
+        try:
+            genai.configure(api_key=api_key.strip())
+            models_to_try = ["gemini-2.5-flash", "gemini-flash-latest", "gemini-1.5-flash"]
+            response_text = ""
+            for m_name in models_to_try:
+                try:
+                    model = genai.GenerativeModel(m_name)
+                    res = model.generate_content(prompt)
+                    if res and res.text:
+                        response_text = res.text
+                        break
+                except Exception:
+                    continue
+
+            # Clean JSON text
+            cleaned = re.sub(r'```(?:json)?', '', response_text).strip()
+            generated_data = json.loads(cleaned)
+        except Exception as e:
+            return Response({'error': f'Failed to generate questions: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        # If quiz_id is provided, automatically persist questions to database
+        created_questions = []
+        if quiz_id:
+            quiz = get_object_or_404(Quiz, id=quiz_id)
+            current_order = quiz.questions.count() + 1
+            for q_item in generated_data:
+                question = Question.objects.create(
+                    quiz=quiz,
+                    question_text=q_item.get('question'),
+                    order=current_order,
+                    points=1,
+                    explanation=q_item.get('explanation', '')
+                )
+                current_order += 1
+                for idx, opt_text in enumerate(q_item.get('options', [])):
+                    AnswerOption.objects.create(
+                        question=question,
+                        option_text=opt_text,
+                        is_correct=(idx == q_item.get('correct_index', 0)),
+                        order=idx + 1
+                    )
+                created_questions.append(question.id)
+
+        return Response({
+            'success': True,
+            'message': f'Generated {len(generated_data)} questions successfully!',
+            'questions': generated_data,
+            'created_question_ids': created_questions
+        }, status=status.HTTP_200_OK)
+
+
+class BulkImportQuestionsView(APIView):
+    permission_classes = [IsTeacher]
+
+    def post(self, request):
+        import re
+        quiz_id = request.data.get('quiz_id')
+        raw_text = request.data.get('raw_text', '')
+
+        if not quiz_id or not raw_text.strip():
+            return Response({'error': 'quiz_id and raw_text are required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        quiz = get_object_or_404(Quiz, id=quiz_id)
+
+        # Regex parser for numbered questions
+        # Matches patterns like:
+        # 1. Question text?
+        # A) Option 1
+        # B) Option 2
+        # C) Option 3
+        # D) Option 4
+        # Ans: B
+        blocks = re.split(r'\n\s*(?=\d+[\.\)])', raw_text.strip())
+        created_count = 0
+        current_order = quiz.questions.count() + 1
+
+        for block in blocks:
+            lines = [l.strip() for l in block.split('\n') if l.strip()]
+            if not lines:
+                continue
+
+            # First line is question
+            q_line = re.sub(r'^\d+[\.\)]\s*', '', lines[0])
+            options = []
+            correct_letter = 'A'
+            explanation = ''
+
+            for line in lines[1:]:
+                # Check for answer tag
+                ans_match = re.match(r'^(?:Ans|Answer|Correct)[:\s]+([A-Da-d])', line, re.IGNORECASE)
+                if ans_match:
+                    correct_letter = ans_match.group(1).upper()
+                    continue
+
+                # Check for explanation
+                exp_match = re.match(r'^(?:Exp|Explanation)[:\s]+(.*)', line, re.IGNORECASE)
+                if exp_match:
+                    explanation = exp_match.group(1)
+                    continue
+
+                # Check for option
+                opt_match = re.match(r'^([A-Da-d])[\.\)]\s*(.*)', line)
+                if opt_match:
+                    letter = opt_match.group(1).upper()
+                    text = opt_match.group(2)
+                    options.append((letter, text))
+
+            if q_line and options:
+                question = Question.objects.create(
+                    quiz=quiz,
+                    question_text=q_line,
+                    order=current_order,
+                    points=1,
+                    explanation=explanation
+                )
+                current_order += 1
+                for idx, (letter, text) in enumerate(options):
+                    AnswerOption.objects.create(
+                        question=question,
+                        option_text=text,
+                        is_correct=(letter == correct_letter),
+                        order=idx + 1
+                    )
+                created_count += 1
+
+        return Response({
+            'success': True,
+            'imported_count': created_count,
+            'message': f'Imported {created_count} questions into {quiz.title} successfully!'
+        }, status=status.HTTP_201_CREATED)

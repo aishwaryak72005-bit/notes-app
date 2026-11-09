@@ -22,6 +22,7 @@ class NoteSerializer(serializers.ModelSerializer):
             'id', 'concept', 'title', 'definition', 'explanation',
             'real_world_analogy', 'syntax', 'code_example', 'code_language',
             'expected_output', 'common_mistakes', 'important_points',
+            'interview_questions', 'resource_url',
             'is_published', 'created_by', 'created_by_name', 'created_at', 'updated_at'
         )
 
@@ -63,3 +64,12 @@ class TechnologySerializer(serializers.ModelSerializer):
             'icon_name', 'badge_color', 'is_popular', 'is_active',
             'total_modules', 'total_concepts', 'modules', 'created_at'
         )
+
+
+class AnnouncementSerializer(serializers.ModelSerializer):
+    created_by_name = serializers.ReadOnlyField(source='created_by.get_full_name')
+
+    class Meta:
+        from .models import Announcement
+        model = Announcement
+        fields = ('id', 'title', 'message', 'is_active', 'created_by', 'created_by_name', 'created_at', 'updated_at')

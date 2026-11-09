@@ -6,6 +6,7 @@ from .views import (
     ModuleViewSet,
     ConceptViewSet,
     NoteViewSet,
+    AnnouncementViewSet,
     StudentDashboardView,
     TeacherDashboardView,
 )
@@ -16,6 +17,7 @@ router.register(r'technologies', TechnologyViewSet, basename='technology')
 router.register(r'modules', ModuleViewSet, basename='module')
 router.register(r'concepts', ConceptViewSet, basename='concept')
 router.register(r'notes', NoteViewSet, basename='note')
+router.register(r'announcements', AnnouncementViewSet, basename='announcement')
 
 urlpatterns = [
     path('dashboard/student/', StudentDashboardView.as_view(), name='student_dashboard'),

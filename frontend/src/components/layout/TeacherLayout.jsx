@@ -68,10 +68,11 @@ const TeacherLayout = () => {
                 <span className="text-xl font-extrabold tracking-tight text-white font-serif">
                   TechNotes
                 </span>
-                <span className="block text-[10px] uppercase tracking-wider text-amber-200/80 font-bold">
-                  Teacher Portal
+                <span className="block text-[10px] uppercase tracking-wider text-amber-300 font-bold">
+                  Trainer Studio
                 </span>
               </div>
+
             </div>
             <button
               onClick={() => setMobileMenuOpen(false)}
@@ -127,7 +128,7 @@ const TeacherLayout = () => {
                   {user?.first_name ? `${user.first_name} ${user.last_name}` : user?.username}
                 </p>
                 <p className="text-[10px] text-amber-200/90 font-medium capitalize truncate">
-                  Instructor / Educator
+                  Solo Lead Trainer
                 </p>
               </div>
             </div>
@@ -153,14 +154,15 @@ const TeacherLayout = () => {
             >
               <Menu className="w-5 h-5" />
             </button>
-            <h2 className="text-base font-bold text-forest-dark">Content Management & Administration</h2>
+            <h2 className="text-base font-bold text-forest-dark">Trainer Studio & Course Management</h2>
           </div>
 
           <div className="flex items-center space-x-3">
             <span className="px-3 py-1 bg-amber-100 text-amber-800 text-xs font-semibold rounded-full border border-amber-300">
-              Instructor Mode
+              Trainer Studio
             </span>
           </div>
+
         </header>
 
         <main className="p-6 md:p-8 flex-1 max-w-7xl mx-auto w-full">

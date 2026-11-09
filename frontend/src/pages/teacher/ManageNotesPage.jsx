@@ -45,8 +45,11 @@ const ManageNotesPage = () => {
     expected_output: '',
     common_mistakes: '',
     important_points: '',
+    interview_questions: '',
+    resource_url: '',
     is_published: true,
   });
+
 
   useEffect(() => {
     const fetchTree = async () => {
@@ -123,6 +126,8 @@ const ManageNotesPage = () => {
             expected_output: n.expected_output || '',
             common_mistakes: n.common_mistakes || '',
             important_points: n.important_points || '',
+            interview_questions: n.interview_questions || '',
+            resource_url: n.resource_url || '',
             is_published: n.is_published,
           });
         } else {
@@ -140,9 +145,12 @@ const ManageNotesPage = () => {
             expected_output: '',
             common_mistakes: '',
             important_points: '',
+            interview_questions: '',
+            resource_url: '',
             is_published: true,
           });
         }
+
       } catch (err) {
         console.error(err);
       }
@@ -330,8 +338,40 @@ const ManageNotesPage = () => {
               </div>
             </div>
           )}
+
+          {noteForm.interview_questions && (
+            <div className="p-5 rounded-2xl bg-purple-50/80 border border-purple-200 space-y-2">
+              <div className="flex items-center space-x-2">
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-200 text-purple-900 uppercase">
+                  Interview Corner
+                </span>
+                <span className="text-xs font-bold text-purple-900">Top Technical Interview Questions</span>
+              </div>
+              <div className="text-xs sm:text-sm text-purple-950 whitespace-pre-line leading-relaxed font-sans">
+                {noteForm.interview_questions}
+              </div>
+            </div>
+          )}
+
+          {noteForm.resource_url && (
+            <div className="p-4 rounded-2xl bg-teal-50 border border-teal-200 flex items-center justify-between">
+              <div>
+                <span className="text-xs font-bold text-teal-900 block">Downloadable Study Resource</span>
+                <span className="text-[11px] text-teal-700">{noteForm.resource_url}</span>
+              </div>
+              <a
+                href={noteForm.resource_url}
+                target="_blank"
+                rel="noreferrer"
+                className="px-3.5 py-1.5 bg-teal-700 text-white text-xs font-semibold rounded-xl hover:bg-teal-800 transition-colors"
+              >
+                Download File
+              </a>
+            </div>
+          )}
         </div>
       ) : (
+
         /* Edit Form */
         <form onSubmit={handleSave} className="bg-white rounded-3xl p-6 sm:p-8 shadow-card border border-sage/40 space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -488,7 +528,44 @@ const ManageNotesPage = () => {
             </div>
           </div>
 
+          {/* 9. Interview Corner & 10. Resource URL */}
+          <div className="space-y-4 pt-2 border-t border-sage/30">
+            <div>
+              <div className="flex items-center space-x-2 mb-1">
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-800 uppercase">
+                  Interview Corner
+                </span>
+                <label className="text-xs font-semibold text-charcoal uppercase tracking-wider">
+                  9. Top Technical Interview Questions & Model Answers
+                </label>
+              </div>
+              <textarea
+                name="interview_questions"
+                rows="4"
+                value={noteForm.interview_questions}
+                onChange={handleChange}
+                placeholder={`Q1: What is the difference between mutable and immutable types in Python?\nA1: Mutable objects (like lists, dicts) can be modified in place, whereas immutable objects (like ints, strings, tuples) cannot be altered after creation.`}
+                className="w-full px-3.5 py-2.5 bg-purple-50/40 border border-purple-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 font-mono resize-none"
+              ></textarea>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-charcoal mb-1 uppercase tracking-wider">
+                10. Downloadable Resource / Cheat Sheet / Jupyter Notebook Link (.ipynb / .pdf)
+              </label>
+              <input
+                type="text"
+                name="resource_url"
+                value={noteForm.resource_url}
+                onChange={handleChange}
+                placeholder="https://example.com/materials/python_basics.ipynb or /static/downloads/cheatsheet.pdf"
+                className="w-full px-3.5 py-2 bg-lightgrey/50 border border-sage/60 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-forest"
+              />
+            </div>
+          </div>
+
           <div className="flex items-center justify-between pt-4 border-t border-sage/30">
+
             <label className="flex items-center space-x-2 text-xs font-semibold text-charcoal cursor-pointer">
               <input
                 type="checkbox"

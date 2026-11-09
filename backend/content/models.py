@@ -129,6 +129,8 @@ class Note(models.Model):
     expected_output = models.TextField(blank=True, null=True, help_text="Output produced by the code example.")
     common_mistakes = models.TextField(blank=True, null=True, help_text="Frequent pitfalls and traps.")
     important_points = models.TextField(blank=True, null=True, help_text="Crucial key takeaways or best practices.")
+    interview_questions = models.TextField(blank=True, null=True, help_text="Top company interview questions and model answers.")
+    resource_url = models.CharField(max_length=500, blank=True, null=True, help_text="URL to downloadable Jupyter Notebook, dataset, or PDF.")
     is_published = models.BooleanField(default=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='created_notes')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -139,3 +141,18 @@ class Note(models.Model):
 
     def __str__(self):
         return f"Note: {self.title} ({self.concept.title})"
+
+
+class Announcement(models.Model):
+    title = models.CharField(max_length=200)
+    message = models.TextField()
+    is_active = models.BooleanField(default=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='announcements')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.title

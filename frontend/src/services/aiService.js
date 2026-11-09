@@ -38,4 +38,10 @@ export const aiService = {
     const res = await api.delete(`ai/conversations/${id}/`);
     return res.data;
   },
+
+  async getDoubtRadar() {
+    const res = await api.get('ai/doubt-radar/');
+    return res.data;
+  },
 };
+

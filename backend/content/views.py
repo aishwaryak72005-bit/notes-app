@@ -3,14 +3,15 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db.models import Count, Avg, Q
 from django.contrib.auth import get_user_model
-from .models import TechnologyCategory, Technology, Module, Concept, Note
+from .models import TechnologyCategory, Technology, Module, Concept, Note, Announcement
 from .serializers import (
     TechnologyCategorySerializer,
     TechnologySerializer,
     ModuleSerializer,
     ConceptDetailSerializer,
     ConceptShortSerializer,
-    NoteSerializer
+    NoteSerializer,
+    AnnouncementSerializer
 )
 from accounts.permissions import IsTeacher
 from quizzes.models import Quiz, QuizAttempt
@@ -108,6 +109,19 @@ class NoteViewSet(viewsets.ModelViewSet):
         if concept_id:
             qs = qs.filter(concept_id=concept_id)
         return qs
+
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user)
+
+
+class AnnouncementViewSet(viewsets.ModelViewSet):
+    queryset = Announcement.objects.filter(is_active=True).order_by('-created_at')
+    serializer_class = AnnouncementSerializer
+
+    def get_permissions(self):
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return [IsTeacher()]
+        return [permissions.AllowAny()]
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)

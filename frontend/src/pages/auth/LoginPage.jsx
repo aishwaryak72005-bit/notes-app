@@ -78,7 +78,7 @@ const LoginPage = () => {
             </p>
           </div>
 
-          {/* Quick Demo Switcher */}
+          {/* Quick 1-Click Demo Login */}
           <div className="mb-6 p-3 bg-ivory/80 rounded-2xl border border-sage/50">
             <p className="text-xs font-semibold text-muted mb-2 uppercase tracking-wide">
               Quick 1-Click Demo Login:
@@ -110,13 +110,14 @@ const LoginPage = () => {
                 }`}
               >
                 <div>
-                  <div className="font-bold">Teacher</div>
+                  <div className="font-bold">Trainer</div>
                   <div className="text-[10px] opacity-80">teacher_sarah</div>
                 </div>
                 {username === 'teacher_sarah' && <CheckCircle2 className="w-3.5 h-3.5" />}
               </button>
             </div>
           </div>
+
 
           {error && (
             <div className="mb-5 p-3.5 bg-red-50 border border-red-200 rounded-2xl flex items-start space-x-2 text-red-700 text-sm">
@@ -190,21 +191,18 @@ const LoginPage = () => {
 
           <div className="mt-6 pt-6 border-t border-sage/30 text-center space-y-2">
             <p className="text-xs text-muted">
-              Don't have an account yet?
+              New to TechNotes?
             </p>
-            <div className="flex justify-center space-x-3 text-xs font-semibold">
+            <div className="flex justify-center text-xs font-semibold">
               <Link to="/register/student" className="text-forest hover:underline">
-                Student Registration →
-              </Link>
-              <span className="text-muted">•</span>
-              <Link to="/register/teacher" className="text-forest hover:underline">
-                Teacher Registration →
+                Create a Student Account →
               </Link>
             </div>
           </div>
         </div>
       </div>
     </div>
+
   );
 };
 

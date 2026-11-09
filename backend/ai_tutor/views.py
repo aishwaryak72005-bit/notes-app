@@ -157,3 +157,41 @@ class UpdateConversationLevelView(APIView):
             conv.save()
             return Response({'status': 'updated', 'explanation_level': level})
         return Response({'error': 'Invalid explanation level'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class StudentDoubtRadarView(APIView):
+    from accounts.permissions import IsTeacher
+    permission_classes = [IsTeacher]
+
+    def get(self, request):
+        from django.db.models import Count
+        # Top concepts students are asking about
+        top_concepts = (
+            AIConversation.objects.filter(concept__isnull=False)
+            .values('concept__id', 'concept__title', 'concept__module__technology__name')
+            .annotate(query_count=Count('messages'))
+            .order_by('-query_count')[:8]
+        )
+
+        # Recent user questions
+        recent_queries = (
+            AIMessage.objects.filter(sender='user')
+            .select_related('conversation', 'conversation__concept', 'conversation__student')
+            .order_by('-created_at')[:10]
+        )
+        queries_data = [
+            {
+                'id': m.id,
+                'content': m.content,
+                'student_name': m.conversation.student.get_full_name() or m.conversation.student.username,
+                'concept_title': m.conversation.concept.title if m.conversation.concept else 'General Concept',
+                'created_at': m.created_at.strftime('%Y-%m-%d %H:%M'),
+            }
+            for m in recent_queries
+        ]
+
+        return Response({
+            'top_concepts': list(top_concepts),
+            'recent_queries': queries_data
+        })
+

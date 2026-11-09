@@ -12,6 +12,9 @@ import {
   X,
   Code2,
   PlusCircle,
+  Sparkles,
+  ClipboardList,
+  FileText,
 } from 'lucide-react';
 
 const ManageQuizzesPage = () => {
@@ -21,14 +24,29 @@ const ManageQuizzesPage = () => {
   const [modules, setModules] = useState([]);
   const [selectedModule, setSelectedModule] = useState('');
   const [concepts, setConcepts] = useState([]);
+  const [allConcepts, setAllConcepts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const [createQuizModal, setCreateQuizModal] = useState(false);
   const [addQuestionModal, setAddQuestionModal] = useState(false);
   const [selectedQuizId, setSelectedQuizId] = useState(null);
 
+  // 1-Click AI Quiz Generator State
+  const [aiModal, setAiModal] = useState(false);
+  const [aiQuizId, setAiQuizId] = useState('');
+  const [aiConceptId, setAiConceptId] = useState('');
+  const [aiNumQuestions, setAiNumQuestions] = useState(5);
+  const [aiGenerating, setAiGenerating] = useState(false);
+
+  // Bulk Question Import State
+  const [bulkModal, setBulkModal] = useState(false);
+  const [bulkQuizId, setBulkQuizId] = useState('');
+  const [bulkRawText, setBulkRawText] = useState('');
+  const [bulkImporting, setBulkImporting] = useState(false);
+
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+
 
   const [quizForm, setQuizForm] = useState({
     title: '',
@@ -56,10 +74,14 @@ const ManageQuizzesPage = () => {
   const loadQuizzes = async () => {
     try {
       setLoading(true);
-      const res = await quizService.getQuizzes();
+      const [res, techs, concs] = await Promise.all([
+        quizService.getQuizzes(),
+        contentService.getTechnologies(),
+        contentService.getConcepts(),
+      ]);
       setQuizzes(res);
-      const techs = await contentService.getTechnologies();
       setTechnologies(techs);
+      setAllConcepts(concs);
       if (techs.length > 0) setSelectedTech(techs[0].slug);
     } catch (err) {
       console.error(err);
@@ -68,6 +90,7 @@ const ManageQuizzesPage = () => {
       setLoading(false);
     }
   };
+
 
   useEffect(() => {
     loadQuizzes();
@@ -156,23 +179,86 @@ const ManageQuizzesPage = () => {
     }
   };
 
+  const handleGenerateAIQuiz = async (e) => {
+    e.preventDefault();
+    if (!aiQuizId || !aiConceptId) {
+      setError('Please select both a quiz and a concept.');
+      return;
+    }
+    setAiGenerating(true);
+    setError('');
+    setSuccess('');
+    try {
+      const res = await quizService.generateAIQuiz({
+        quiz_id: aiQuizId,
+        concept_id: aiConceptId,
+        num_questions: aiNumQuestions,
+      });
+      setSuccess(res.message || 'AI Quiz generated and saved successfully!');
+      setAiModal(false);
+      loadQuizzes();
+    } catch (err) {
+      console.error(err);
+      setError(err.response?.data?.error || 'Failed to generate AI quiz.');
+    } finally {
+      setAiGenerating(false);
+    }
+  };
+
+  const handleBulkImport = async (e) => {
+    e.preventDefault();
+    if (!bulkQuizId || !bulkRawText.trim()) {
+      setError('Target quiz and question text are required.');
+      return;
+    }
+    setBulkImporting(true);
+    setError('');
+    setSuccess('');
+    try {
+      const res = await quizService.bulkImportQuestions(bulkQuizId, bulkRawText);
+      setSuccess(res.message || 'Bulk questions imported successfully!');
+      setBulkModal(false);
+      setBulkRawText('');
+      loadQuizzes();
+    } catch (err) {
+      console.error(err);
+      setError(err.response?.data?.error || 'Failed to bulk import questions.');
+    } finally {
+      setBulkImporting(false);
+    }
+  };
+
   if (loading) return <Loader message="Loading quiz assessments..." />;
+
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-forest-dark">Quiz & Assessment Management</h1>
-          <p className="text-xs text-muted mt-0.5">Create concept quizzes, manage answer options, and set explanations.</p>
+          <h1 className="text-2xl font-bold text-forest-dark font-serif">Quiz & Assessment Management</h1>
+          <p className="text-xs text-muted mt-0.5">Generate 1-click AI quizzes, bulk paste questions, and set scoring rules.</p>
         </div>
 
-        <button
-          onClick={() => setCreateQuizModal(true)}
-          className="px-4 py-2 bg-forest hover:bg-forest-dark text-ivory text-xs font-semibold rounded-2xl shadow-sm flex items-center space-x-1.5 transition-all self-start sm:self-auto"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Create New Quiz</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => {
+              if (quizzes.length > 0) setAiQuizId(quizzes[0].id);
+              if (allConcepts.length > 0) setAiConceptId(allConcepts[0].id);
+              setAiModal(true);
+            }}
+            className="px-4 py-2 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white text-xs font-semibold rounded-2xl shadow-sm flex items-center space-x-1.5 transition-all"
+          >
+            <Sparkles className="w-4 h-4 text-amber-200" />
+            <span>✨ 1-Click AI Quiz</span>
+          </button>
+          <button
+            onClick={() => setCreateQuizModal(true)}
+            className="px-4 py-2 bg-forest hover:bg-forest-dark text-ivory text-xs font-semibold rounded-2xl shadow-sm flex items-center space-x-1.5 transition-all"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Create Quiz</span>
+          </button>
+        </div>
       </div>
 
       {success && (
@@ -205,13 +291,34 @@ const ManageQuizzesPage = () => {
                 <p className="text-xs text-muted">{q.description || 'Concept Assessment'}</p>
               </div>
 
-              <div className="flex items-center space-x-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  onClick={() => {
+                    setAiQuizId(q.id);
+                    setAiConceptId(q.concept || '');
+                    setAiModal(true);
+                  }}
+                  className="px-3 py-1.5 bg-amber-50 border border-amber-300 hover:bg-amber-100 text-amber-900 text-xs font-semibold rounded-xl flex items-center space-x-1 transition-colors"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                  <span>AI Generate</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setBulkQuizId(q.id);
+                    setBulkModal(true);
+                  }}
+                  className="px-3 py-1.5 bg-ivory border border-sage/60 hover:bg-sage/30 text-charcoal text-xs font-semibold rounded-xl flex items-center space-x-1 transition-colors"
+                >
+                  <ClipboardList className="w-3.5 h-3.5 text-forest" />
+                  <span>Bulk Paste</span>
+                </button>
                 <button
                   onClick={() => handleOpenAddQuestion(q.id)}
-                  className="px-3.5 py-1.5 bg-ivory border border-sage/60 hover:bg-sage/30 text-forest text-xs font-semibold rounded-xl flex items-center space-x-1"
+                  className="px-3 py-1.5 bg-ivory border border-sage/60 hover:bg-sage/30 text-forest text-xs font-semibold rounded-xl flex items-center space-x-1 transition-colors"
                 >
                   <PlusCircle className="w-3.5 h-3.5" />
-                  <span>Add Question</span>
+                  <span>Manual</span>
                 </button>
                 <button
                   onClick={() => handleDeleteQuiz(q.id)}
@@ -224,6 +331,7 @@ const ManageQuizzesPage = () => {
             </div>
 
             {/* Questions preview */}
+
             <div className="space-y-2">
               <span className="text-xs font-bold text-muted uppercase tracking-wider">
                 Questions ({q.questions?.length || 0})
@@ -498,7 +606,206 @@ const ManageQuizzesPage = () => {
           </div>
         </div>
       )}
+
+      {/* 1-Click AI Quiz Generator Modal */}
+      {aiModal && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-sage/40">
+            <div className="flex items-center justify-between pb-4 border-b border-sage/30">
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center text-amber-700">
+                  <Sparkles className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-forest-dark">✨ 1-Click AI Quiz Generator</h3>
+                  <p className="text-xs text-muted">Generate MCQs directly from published lesson notes</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setAiModal(false)}
+                className="p-1 rounded-lg text-muted hover:text-charcoal"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleGenerateAIQuiz} className="space-y-4 pt-4">
+              <div>
+                <label className="block text-xs font-semibold text-charcoal mb-1 uppercase tracking-wider">
+                  Target Quiz Container
+                </label>
+                <select
+                  required
+                  value={aiQuizId}
+                  onChange={(e) => setAiQuizId(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-lightgrey/50 border border-sage/60 rounded-xl text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-forest"
+                >
+                  <option value="">Select Quiz to populate</option>
+                  {quizzes.map((q) => (
+                    <option key={q.id} value={q.id}>
+                      {q.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-charcoal mb-1 uppercase tracking-wider">
+                  Source Lesson Concept
+                </label>
+                <select
+                  required
+                  value={aiConceptId}
+                  onChange={(e) => setAiConceptId(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-lightgrey/50 border border-sage/60 rounded-xl text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-forest"
+                >
+                  <option value="">Select concept note to test</option>
+                  {allConcepts.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.technology_name ? `${c.technology_name} - ` : ''}{c.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-charcoal mb-1 uppercase tracking-wider">
+                  Number of Questions
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {[3, 5, 10].map((num) => (
+                    <button
+                      key={num}
+                      type="button"
+                      onClick={() => setAiNumQuestions(num)}
+                      className={`py-2 text-xs font-bold rounded-xl border transition-all ${
+                        aiNumQuestions === num
+                          ? 'bg-amber-600 text-white border-amber-600 shadow-xs'
+                          : 'bg-ivory text-charcoal border-sage/60 hover:bg-sage/20'
+                      }`}
+                    >
+                      {num} Questions
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-[11px] text-amber-900 leading-relaxed">
+                Gemini AI will analyze your notes, definitions, common mistakes, and code examples to create multiple-choice questions with full explanations.
+              </div>
+
+              <div className="flex justify-end space-x-2 pt-4 border-t border-sage/30">
+                <button
+                  type="button"
+                  onClick={() => setAiModal(false)}
+                  className="px-4 py-2 border border-sage/60 rounded-xl text-xs font-semibold text-charcoal hover:bg-lightgrey"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={aiGenerating}
+                  className="px-5 py-2 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white rounded-xl text-xs font-bold shadow-md flex items-center space-x-1.5 disabled:opacity-60"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>{aiGenerating ? 'Generating Quiz...' : 'Generate with Gemini'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk Question Import Modal */}
+      {bulkModal && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-sage/40">
+            <div className="flex items-center justify-between pb-4 border-b border-sage/30">
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 rounded-xl bg-forest/10 flex items-center justify-center text-forest">
+                  <ClipboardList className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-forest-dark">📋 Bulk Question Paste</h3>
+                  <p className="text-xs text-muted">Paste questions from Word, PDF, or WhatsApp</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setBulkModal(false)}
+                className="p-1 rounded-lg text-muted hover:text-charcoal"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleBulkImport} className="space-y-4 pt-4">
+              <div>
+                <label className="block text-xs font-semibold text-charcoal mb-1 uppercase tracking-wider">
+                  Target Quiz
+                </label>
+                <select
+                  required
+                  value={bulkQuizId}
+                  onChange={(e) => setBulkQuizId(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-lightgrey/50 border border-sage/60 rounded-xl text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-forest"
+                >
+                  <option value="">Select Target Quiz</option>
+                  {quizzes.map((q) => (
+                    <option key={q.id} value={q.id}>
+                      {q.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-semibold text-charcoal uppercase tracking-wider">
+                    Paste Questions Text
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setBulkRawText(`1. What is the output of print(type([])) in Python?\nA) <class 'list'>\nB) <class 'array'>\nC) <class 'tuple'>\nD) <class 'dict'>\nAns: A\nExp: In Python, square brackets define a built-in list object.`);
+                    }}
+                    className="text-[11px] text-forest underline hover:text-forest-dark"
+                  >
+                    Insert Example Template
+                  </button>
+                </div>
+                <textarea
+                  rows="7"
+                  required
+                  value={bulkRawText}
+                  onChange={(e) => setBulkRawText(e.target.value)}
+                  placeholder={`1. Question text here?\nA) Option 1\nB) Option 2\nC) Option 3\nD) Option 4\nAns: B\nExp: Explanation here...`}
+                  className="w-full px-3.5 py-2.5 bg-ivory/60 border border-sage/60 rounded-xl text-xs font-mono focus:outline-none focus:ring-2 focus:ring-forest resize-none"
+                ></textarea>
+              </div>
+
+              <div className="flex justify-end space-x-2 pt-4 border-t border-sage/30">
+                <button
+                  type="button"
+                  onClick={() => setBulkModal(false)}
+                  className="px-4 py-2 border border-sage/60 rounded-xl text-xs font-semibold text-charcoal hover:bg-lightgrey"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={bulkImporting}
+                  className="px-5 py-2 bg-forest hover:bg-forest-dark text-ivory rounded-xl text-xs font-semibold shadow-sm flex items-center space-x-1.5 disabled:opacity-60"
+                >
+                  <ClipboardList className="w-3.5 h-3.5" />
+                  <span>{bulkImporting ? 'Importing...' : 'Parse & Import'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
+
   );
 };
 

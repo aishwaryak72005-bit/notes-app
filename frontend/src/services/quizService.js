@@ -55,4 +55,15 @@ export const quizService = {
     const res = await api.delete(`quizzes/questions/${id}/`);
     return res.data;
   },
+
+  async generateAIQuiz(data) {
+    const res = await api.post('quizzes/generate-ai-quiz/', data);
+    return res.data;
+  },
+
+  async bulkImportQuestions(quizId, rawText) {
+    const res = await api.post('quizzes/bulk-import/', { quiz_id: quizId, raw_text: rawText });
+    return res.data;
+  },
 };
+

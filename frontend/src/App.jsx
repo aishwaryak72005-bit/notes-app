@@ -43,8 +43,10 @@ function App() {
           {/* Public Auth Routes */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register/student" element={<StudentRegisterPage />} />
-          <Route path="/register/teacher" element={<TeacherRegisterPage />} />
+          <Route path="/register" element={<Navigate to="/register/student" replace />} />
+          <Route path="/register/teacher" element={<Navigate to="/register/student" replace />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+
 
           {/* Student Protected Portal */}
           <Route
