@@ -134,5 +134,17 @@ export const contentService = {
     const res = await api.delete(`content/announcements/${id}/`);
     return res.data;
   },
+
+  // 1-Click ZIP Course Upload
+  async uploadCourseZip(formData, onUploadProgress) {
+    const res = await api.post('content/upload-zip/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      onUploadProgress,
+    });
+    return res.data;
+  },
 };
+
 

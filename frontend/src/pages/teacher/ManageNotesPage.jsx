@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { contentService } from '../../services/contentService';
 import CodeBlock from '../../components/notes/CodeBlock';
 import Loader from '../../components/common/Loader';
+import ZipUploaderModal from '../../components/trainer/ZipUploaderModal';
 import {
   Save,
   Eye,
@@ -13,6 +14,7 @@ import {
   AlertTriangle,
   CheckCircle,
   FileText,
+  FileArchive,
 } from 'lucide-react';
 
 const ManageNotesPage = () => {
@@ -29,6 +31,7 @@ const ManageNotesPage = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
+  const [zipModalOpen, setZipModalOpen] = useState(false);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
 
@@ -197,6 +200,14 @@ const ManageNotesPage = () => {
         </div>
 
         <div className="flex items-center space-x-2">
+          <button
+            type="button"
+            onClick={() => setZipModalOpen(true)}
+            className="px-4 py-2 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white text-xs font-bold rounded-2xl flex items-center space-x-1.5 shadow-md transition-all"
+          >
+            <FileArchive className="w-4 h-4 text-amber-200" />
+            <span>📦 Upload Course ZIP</span>
+          </button>
           <button
             type="button"
             onClick={() => setPreviewMode(!previewMode)}
@@ -588,6 +599,17 @@ const ManageNotesPage = () => {
           </div>
         </form>
       )}
+      {/* 1-Click ZIP Course Upload Modal */}
+      <ZipUploaderModal
+        isOpen={zipModalOpen}
+        onClose={() => setZipModalOpen(false)}
+        onSuccess={() => {
+          if (selectedTech) {
+            contentService.getModules(selectedTech).then(setModules);
+          }
+        }}
+        technologies={technologies}
+      />
     </div>
   );
 };

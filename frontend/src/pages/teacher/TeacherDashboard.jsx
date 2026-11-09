@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { contentService } from '../../services/contentService';
 import { aiService } from '../../services/aiService';
+import ZipUploaderModal from '../../components/trainer/ZipUploaderModal';
 import Loader from '../../components/common/Loader';
 import {
   Layers,
@@ -20,6 +21,7 @@ import {
   Send,
   Trash2,
   Lightbulb,
+  FileArchive,
 } from 'lucide-react';
 
 const TeacherDashboard = () => {
@@ -27,6 +29,8 @@ const TeacherDashboard = () => {
   const [data, setData] = useState(null);
   const [announcements, setAnnouncements] = useState([]);
   const [doubtRadar, setDoubtRadar] = useState(null);
+  const [technologies, setTechnologies] = useState([]);
+  const [zipModalOpen, setZipModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
   // New announcement form state
@@ -34,18 +38,21 @@ const TeacherDashboard = () => {
   const [announcementMsg, setAnnouncementMsg] = useState('');
   const [postingAnnouncement, setPostingAnnouncement] = useState(false);
 
+
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      const [dashRes, annRes, radarRes] = await Promise.allSettled([
+      const [dashRes, annRes, radarRes, techRes] = await Promise.allSettled([
         contentService.getTeacherDashboard(),
         contentService.getAnnouncements(),
         aiService.getDoubtRadar(),
+        contentService.getTechnologies(),
       ]);
 
       if (dashRes.status === 'fulfilled') setData(dashRes.value);
       if (annRes.status === 'fulfilled') setAnnouncements(annRes.value || []);
       if (radarRes.status === 'fulfilled') setDoubtRadar(radarRes.value || null);
+      if (techRes.status === 'fulfilled') setTechnologies(techRes.value || []);
     } catch (err) {
       console.error('Failed to load trainer dashboard:', err);
     } finally {
@@ -123,6 +130,13 @@ const TeacherDashboard = () => {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => setZipModalOpen(true)}
+            className="px-4 py-2 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white text-xs font-bold rounded-2xl shadow-md transition-all flex items-center space-x-1.5"
+          >
+            <FileArchive className="w-4 h-4 text-amber-200" />
+            <span>📦 1-Click ZIP Upload</span>
+          </button>
           <Link
             to="/teacher/notes"
             className="px-4 py-2 bg-forest hover:bg-forest-dark text-ivory text-xs font-semibold rounded-2xl shadow-md transition-all flex items-center space-x-1.5"
@@ -469,6 +483,13 @@ const TeacherDashboard = () => {
           </div>
         )}
       </div>
+      {/* 1-Click ZIP Course Upload Modal */}
+      <ZipUploaderModal
+        isOpen={zipModalOpen}
+        onClose={() => setZipModalOpen(false)}
+        onSuccess={() => fetchDashboardData()}
+        technologies={technologies}
+      />
     </div>
   );
 };

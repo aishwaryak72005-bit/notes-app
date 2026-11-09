@@ -9,6 +9,7 @@ from .views import (
     AnnouncementViewSet,
     StudentDashboardView,
     TeacherDashboardView,
+    ZipCourseUploadView,
 )
 
 router = DefaultRouter()
@@ -20,7 +21,9 @@ router.register(r'notes', NoteViewSet, basename='note')
 router.register(r'announcements', AnnouncementViewSet, basename='announcement')
 
 urlpatterns = [
+    path('upload-zip/', ZipCourseUploadView.as_view(), name='upload_course_zip'),
     path('dashboard/student/', StudentDashboardView.as_view(), name='student_dashboard'),
     path('dashboard/teacher/', TeacherDashboardView.as_view(), name='teacher_dashboard'),
     path('', include(router.urls)),
 ]
+

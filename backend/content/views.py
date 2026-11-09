@@ -250,3 +250,33 @@ class TeacherDashboardView(APIView):
             },
             'recent_attempts': attempts_data,
         })
+
+
+class ZipCourseUploadView(APIView):
+    from rest_framework.parsers import MultiPartParser, FormParser
+    permission_classes = [IsTeacher]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def post(self, request):
+        from .zip_extractor import ZipCourseIngestionService
+        zip_file = request.FILES.get('zip_file')
+        if not zip_file:
+            return Response({'error': 'A valid .zip file is required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        technology_id = request.data.get('technology_id')
+        new_tech_name = request.data.get('new_tech_name')
+        category_id = request.data.get('category_id')
+
+        res = ZipCourseIngestionService.process_zip_upload(
+            zip_file_obj=zip_file,
+            technology_id=technology_id,
+            new_tech_name=new_tech_name,
+            category_id=category_id,
+            user=request.user
+        )
+
+        if res.get('success'):
+            return Response(res, status=status.HTTP_201_CREATED)
+        else:
+            return Response(res, status=status.HTTP_400_BAD_REQUEST)
+
