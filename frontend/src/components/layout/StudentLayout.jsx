@@ -13,9 +13,9 @@ import {
   Search,
   Bell,
   BookOpen,
-  Menu,
   X,
   Shield,
+  HelpCircle,
 } from 'lucide-react';
 
 const StudentLayout = () => {
@@ -31,11 +31,13 @@ const StudentLayout = () => {
 
   const navItems = [
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-    { name: 'Technologies', path: '/technologies', icon: Layers },
-    { name: 'My Learning', path: '/my-learning', icon: PlayCircle },
+    { name: 'My Subjects', path: '/technologies', icon: Layers },
+    { name: 'Study Materials', path: '/my-learning', icon: BookOpen },
     { name: 'AI Tutor', path: '/ai-tutor', icon: Sparkles, badge: 'AI' },
+    { name: 'Practice Questions', path: '/practice', icon: HelpCircle, badge: 'Instant' },
+    { name: 'Online Quizzes', path: '/my-learning', icon: PlayCircle },
+    { name: 'My Progress', path: '/progress', icon: BarChart3 },
     { name: 'Bookmarks', path: '/bookmarks', icon: Bookmark },
-    { name: 'Progress', path: '/progress', icon: BarChart3 },
     { name: 'Profile', path: '/profile', icon: User },
   ];
 

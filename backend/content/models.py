@@ -131,6 +131,7 @@ class Note(models.Model):
     important_points = models.TextField(blank=True, null=True, help_text="Crucial key takeaways or best practices.")
     interview_questions = models.TextField(blank=True, null=True, help_text="Top company interview questions and model answers.")
     resource_url = models.CharField(max_length=500, blank=True, null=True, help_text="URL to downloadable Jupyter Notebook, dataset, or PDF.")
+    allow_download = models.BooleanField(default=True, help_text="Controls if students can download original materials.")
     is_published = models.BooleanField(default=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='created_notes')
     created_at = models.DateTimeField(auto_now_add=True)

@@ -50,6 +50,7 @@ const ManageNotesPage = () => {
     important_points: '',
     interview_questions: '',
     resource_url: '',
+    allow_download: true,
     is_published: true,
   });
 
@@ -131,6 +132,7 @@ const ManageNotesPage = () => {
             important_points: n.important_points || '',
             interview_questions: n.interview_questions || '',
             resource_url: n.resource_url || '',
+            allow_download: n.allow_download !== undefined ? n.allow_download : true,
             is_published: n.is_published,
           });
         } else {
@@ -150,6 +152,7 @@ const ManageNotesPage = () => {
             important_points: '',
             interview_questions: '',
             resource_url: '',
+            allow_download: true,
             is_published: true,
           });
         }
@@ -560,18 +563,33 @@ const ManageNotesPage = () => {
               ></textarea>
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-charcoal mb-1 uppercase tracking-wider">
-                10. Downloadable Resource / Cheat Sheet / Jupyter Notebook Link (.ipynb / .pdf)
-              </label>
-              <input
-                type="text"
-                name="resource_url"
-                value={noteForm.resource_url}
-                onChange={handleChange}
-                placeholder="https://example.com/materials/python_basics.ipynb or /static/downloads/cheatsheet.pdf"
-                className="w-full px-3.5 py-2 bg-lightgrey/50 border border-sage/60 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-forest"
-              />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
+              <div className="sm:col-span-2">
+                <label className="block text-xs font-semibold text-charcoal mb-1 uppercase tracking-wider">
+                  10. Downloadable Resource / Jupyter Notebook Link (.ipynb / .pdf / .docx)
+                </label>
+                <input
+                  type="text"
+                  name="resource_url"
+                  value={noteForm.resource_url}
+                  onChange={handleChange}
+                  placeholder="https://example.com/materials/python_basics.ipynb or /media/course_materials/..."
+                  className="w-full px-3.5 py-2 bg-lightgrey/50 border border-sage/60 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-forest"
+                />
+              </div>
+
+              <div className="pt-2 sm:pt-5">
+                <label className="flex items-center space-x-2 text-xs font-semibold text-charcoal cursor-pointer p-2 rounded-xl border border-sage/50 bg-ivory/60 hover:bg-sage/20 transition-all">
+                  <input
+                    type="checkbox"
+                    name="allow_download"
+                    checked={noteForm.allow_download !== false}
+                    onChange={handleChange}
+                    className="rounded text-forest focus:ring-forest"
+                  />
+                  <span>Allow Student Downloads</span>
+                </label>
+              </div>
             </div>
           </div>
 

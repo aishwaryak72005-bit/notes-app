@@ -356,3 +356,85 @@ class BulkImportQuestionsView(APIView):
             'imported_count': created_count,
             'message': f'Imported {created_count} questions into {quiz.title} successfully!'
         }, status=status.HTTP_201_CREATED)
+
+
+class PracticeQuestionListView(APIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get(self, request):
+        from django.db.models import Q
+        import random
+
+        qs = Question.objects.select_related('quiz', 'quiz__concept', 'quiz__module__technology').prefetch_related('options')
+        tech_id = request.query_params.get('technology_id')
+        concept_id = request.query_params.get('concept_id')
+
+        if concept_id:
+            qs = qs.filter(quiz__concept_id=concept_id)
+        elif tech_id:
+            qs = qs.filter(
+                Q(quiz__concept__module__technology_id=tech_id) |
+                Q(quiz__module__technology_id=tech_id)
+            )
+
+        questions = list(qs[:25])
+        random.shuffle(questions)
+
+        data = []
+        for q in questions:
+            concept_name = "Core Practice"
+            tech_name = "Technology"
+            if q.quiz.concept:
+                concept_name = q.quiz.concept.title
+                tech_name = q.quiz.concept.module.technology.name
+            elif q.quiz.module:
+                concept_name = q.quiz.module.title
+                tech_name = q.quiz.module.technology.name
+
+            data.append({
+                'id': q.id,
+                'quiz_id': q.quiz_id,
+                'quiz_title': q.quiz.title,
+                'concept_title': concept_name,
+                'technology_name': tech_name,
+                'question_text': q.question_text,
+                'question_type': q.question_type,
+                'code_snippet': q.code_snippet,
+                'options': [
+                    {
+                        'id': opt.id,
+                        'option_text': opt.option_text,
+                        'order': opt.order
+                    }
+                    for opt in q.options.all().order_by('?')
+                ]
+            })
+
+        return Response(data)
+
+
+class CheckPracticeAnswerView(APIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def post(self, request):
+        question_id = request.data.get('question_id')
+        selected_option_id = request.data.get('selected_option_id')
+
+        question = get_object_or_404(Question, id=question_id)
+        correct_option = question.options.filter(is_correct=True).first()
+
+        is_correct = False
+        try:
+            if selected_option_id and correct_option and int(selected_option_id) == correct_option.id:
+                is_correct = True
+        except (ValueError, TypeError):
+            is_correct = False
+
+        return Response({
+            'question_id': question.id,
+            'is_correct': is_correct,
+            'selected_option_id': selected_option_id,
+            'correct_option_id': correct_option.id if correct_option else None,
+            'correct_option_text': correct_option.option_text if correct_option else '',
+            'explanation': question.explanation or 'Option verified.'
+        })

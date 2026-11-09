@@ -14,9 +14,8 @@ import {
   LogOut,
   ShieldCheck,
   BookOpen,
-  Menu,
-  X,
-  GraduationCap,
+  UploadCloud,
+  Sparkles,
 } from 'lucide-react';
 
 const TeacherLayout = () => {
@@ -31,14 +30,14 @@ const TeacherLayout = () => {
 
   const navItems = [
     { name: 'Dashboard', path: '/teacher/dashboard', icon: LayoutDashboard },
-    { name: 'Technologies', path: '/teacher/technologies', icon: Layers },
-    { name: 'Modules', path: '/teacher/modules', icon: FolderTree },
-    { name: 'Concepts', path: '/teacher/concepts', icon: FileCode },
-    { name: 'Notes Management', path: '/teacher/notes', icon: FileText },
-    { name: 'Quiz Management', path: '/teacher/quizzes', icon: HelpCircle },
+    { name: 'Upload Materials', path: '/teacher/notes', icon: UploadCloud, badge: 'ZIP' },
+    { name: 'Study Materials', path: '/teacher/notes', icon: FileText },
+    { name: 'AI-Generated Content', path: '/teacher/ai-content', icon: Sparkles, badge: 'AI' },
+    { name: 'Questions & Quizzes', path: '/teacher/quizzes', icon: HelpCircle },
     { name: 'Students', path: '/teacher/students', icon: Users },
-    { name: 'Analytics', path: '/teacher/analytics', icon: BarChart },
-    { name: 'Profile', path: '/profile', icon: User },
+    { name: 'Analytics & Reports', path: '/teacher/analytics', icon: BarChart },
+    { name: 'Curriculum Tree', path: '/teacher/technologies', icon: Layers },
+    { name: 'Settings / Profile', path: '/profile', icon: User },
   ];
 
   return (

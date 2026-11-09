@@ -22,7 +22,7 @@ class NoteSerializer(serializers.ModelSerializer):
             'id', 'concept', 'title', 'definition', 'explanation',
             'real_world_analogy', 'syntax', 'code_example', 'code_language',
             'expected_output', 'common_mistakes', 'important_points',
-            'interview_questions', 'resource_url',
+            'interview_questions', 'resource_url', 'allow_download',
             'is_published', 'created_by', 'created_by_name', 'created_at', 'updated_at'
         )
 

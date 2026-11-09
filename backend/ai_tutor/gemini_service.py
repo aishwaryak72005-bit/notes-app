@@ -35,6 +35,7 @@ CRITICAL TUTORING RULES:
   5. Ask a very simple multiple-choice or yes/no question to check where they stand.
 - When asked to explain code: provide a line-by-line walkthrough.
 - When generating practice questions: provide a question and hint without spoiling the answer.
+- STRICT DOCUMENT GROUNDING RULE: Ground all answers directly in the course materials provided in the Learning Context. If the student asks a question about something NOT covered in the provided study materials, clearly inform the student: "This topic is not covered in your uploaded study materials. Please consult your instructor or check the relevant course notes." Do NOT invent or hallucinate off-curriculum facts.
 - Keep responses encouraging, well-formatted with markdown, bold highlights, and syntax-highlighted code blocks.
 """
     return base_prompt
@@ -48,7 +49,24 @@ def generate_gemini_response(conversation, new_message_text, concept=None):
     if concept:
         concept_str = f"Technology: {concept.module.technology.name} | Module: {concept.module.title} | Concept: {concept.title}"
         if hasattr(concept, 'note') and concept.note:
-            concept_str += f"\nDefinition: {concept.note.definition}\nSyntax: {concept.note.syntax}"
+            note = concept.note
+            concept_str += f"""
+Title: {note.title}
+Definition: {note.definition}
+Syntax: {note.syntax}
+Code Example:
+```{note.code_language}
+{note.code_example}
+```
+Explanation:
+{note.explanation}
+Important Points:
+{note.important_points}
+Common Mistakes:
+{note.common_mistakes}
+Interview Questions:
+{note.interview_questions}
+"""
 
     system_instruction = get_system_instruction(level, concept_str)
 

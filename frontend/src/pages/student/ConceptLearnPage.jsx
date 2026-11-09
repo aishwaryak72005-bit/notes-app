@@ -23,6 +23,7 @@ import {
   Share2,
   Download,
   ExternalLink,
+  Lock,
 } from 'lucide-react';
 
 
@@ -403,19 +404,26 @@ const ConceptLearnPage = () => {
             <div className="p-4 rounded-2xl bg-teal-50/80 border border-teal-200/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <span className="text-xs font-bold text-teal-900 block">
-                  Downloadable Study Resource / Jupyter Notebook (.ipynb)
+                  Original Document / Jupyter Notebook Resource
                 </span>
                 <span className="text-[11px] text-teal-700 break-all">{note.resource_url}</span>
               </div>
-              <a
-                href={note.resource_url}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center space-x-1.5 px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white text-xs font-semibold rounded-xl shadow-xs transition-colors self-start sm:self-auto"
-              >
-                <Download className="w-3.5 h-3.5" />
-                <span>Download Attachment</span>
-              </a>
+              {note.allow_download !== false ? (
+                <a
+                  href={note.resource_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center space-x-1.5 px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white text-xs font-semibold rounded-xl shadow-xs transition-colors self-start sm:self-auto"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Download Material</span>
+                </a>
+              ) : (
+                <div className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-medium rounded-xl border border-gray-300 self-start sm:self-auto">
+                  <Lock className="w-3.5 h-3.5 text-gray-500" />
+                  <span>Online Reading Only (Downloads Restricted)</span>
+                </div>
+              )}
             </div>
           )}
 

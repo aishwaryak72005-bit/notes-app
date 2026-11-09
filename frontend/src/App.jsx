@@ -24,6 +24,7 @@ import MyLearningPage from './pages/student/MyLearningPage';
 import AITutorPage from './pages/student/AITutorPage';
 import BookmarksPage from './pages/student/BookmarksPage';
 import ProgressPage from './pages/student/ProgressPage';
+import PracticeQuestionsPage from './pages/student/PracticeQuestionsPage';
 
 // Teacher Pages
 import TeacherDashboard from './pages/teacher/TeacherDashboard';
@@ -34,6 +35,7 @@ import ManageNotesPage from './pages/teacher/ManageNotesPage';
 import ManageQuizzesPage from './pages/teacher/ManageQuizzesPage';
 import TeacherStudentsPage from './pages/teacher/TeacherStudentsPage';
 import TeacherAnalyticsPage from './pages/teacher/TeacherAnalyticsPage';
+import AiContentApprovalPage from './pages/teacher/AiContentApprovalPage';
 
 function App() {
   return (
@@ -47,7 +49,6 @@ function App() {
           <Route path="/register/teacher" element={<Navigate to="/register/student" replace />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
-
           {/* Student Protected Portal */}
           <Route
             element={
@@ -57,11 +58,15 @@ function App() {
             }
           >
             <Route path="/dashboard" element={<StudentDashboard />} />
+            <Route path="/subjects" element={<TechnologiesPage />} />
             <Route path="/technologies" element={<TechnologiesPage />} />
             <Route path="/technologies/:slug" element={<TechnologyDetailPage />} />
             <Route path="/learn/:techSlug/:moduleSlug/:conceptSlug" element={<ConceptLearnPage />} />
-            <Route path="/quiz/:conceptId" element={<QuizPage />} />
+            <Route path="/study-materials" element={<MyLearningPage />} />
             <Route path="/my-learning" element={<MyLearningPage />} />
+            <Route path="/practice" element={<PracticeQuestionsPage />} />
+            <Route path="/quizzes" element={<MyLearningPage />} />
+            <Route path="/quiz/:conceptId" element={<QuizPage />} />
             <Route path="/ai-tutor" element={<AITutorPage />} />
             <Route path="/bookmarks" element={<BookmarksPage />} />
             <Route path="/progress" element={<ProgressPage />} />
@@ -77,13 +82,16 @@ function App() {
             }
           >
             <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
-            <Route path="/teacher/technologies" element={<ManageTechnologiesPage />} />
-            <Route path="/teacher/modules" element={<ManageModulesPage />} />
-            <Route path="/teacher/concepts" element={<ManageConceptsPage />} />
+            <Route path="/teacher/upload" element={<ManageNotesPage />} />
+            <Route path="/teacher/materials" element={<ManageNotesPage />} />
             <Route path="/teacher/notes" element={<ManageNotesPage />} />
+            <Route path="/teacher/ai-content" element={<AiContentApprovalPage />} />
             <Route path="/teacher/quizzes" element={<ManageQuizzesPage />} />
             <Route path="/teacher/students" element={<TeacherStudentsPage />} />
             <Route path="/teacher/analytics" element={<TeacherAnalyticsPage />} />
+            <Route path="/teacher/technologies" element={<ManageTechnologiesPage />} />
+            <Route path="/teacher/modules" element={<ManageModulesPage />} />
+            <Route path="/teacher/concepts" element={<ManageConceptsPage />} />
           </Route>
 
           {/* Fallback Root Redirect */}

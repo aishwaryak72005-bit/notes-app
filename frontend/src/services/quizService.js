@@ -65,5 +65,19 @@ export const quizService = {
     const res = await api.post('quizzes/bulk-import/', { quiz_id: quizId, raw_text: rawText });
     return res.data;
   },
+
+  async getPracticeQuestions(params = {}) {
+    const res = await api.get('quizzes/practice/', { params });
+    return res.data;
+  },
+
+  async checkPracticeAnswer(questionId, selectedOptionId) {
+    const res = await api.post('quizzes/practice/check/', {
+      question_id: questionId,
+      selected_option_id: selectedOptionId,
+    });
+    return res.data;
+  },
 };
+
 
