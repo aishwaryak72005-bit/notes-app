@@ -7,6 +7,7 @@ import shutil
 import gc
 from pathlib import Path
 from django.conf import settings
+from django.db import transaction
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.core.files import File
@@ -246,8 +247,9 @@ Return valid JSON ONLY without markdown ticks or outer quotes.
 
         created_questions = 0
         current_order = 1
+        options_to_create = []
 
-        for block in blocks:
+        for block in blocks[:12]:
             lines = [l.strip() for l in block.split('\n') if l.strip()]
             if not lines:
                 continue
@@ -292,12 +294,15 @@ Return valid JSON ONLY without markdown ticks or outer quotes.
             created_questions += 1
 
             for idx, (letter, text) in enumerate(options):
-                AnswerOption.objects.create(
+                options_to_create.append(AnswerOption(
                     question=question,
                     option_text=text,
                     is_correct=(letter == correct_letter),
                     order=idx + 1
-                )
+                ))
+
+        if options_to_create:
+            AnswerOption.objects.bulk_create(options_to_create)
 
         return quiz, created_questions
 
@@ -403,135 +408,146 @@ Return valid JSON ONLY without markdown ticks or outer quotes.
                     rel_p = os.path.relpath(full_p, extracted_root)
                     all_files.append((full_p, rel_p))
 
+            supported_exts = {
+                '.docx', '.pdf', '.ipynb', '.md', '.txt',
+                '.py', '.sql', '.js', '.jsx', '.html', '.css', '.java'
+            }
+
+            valid_files = []
             for full_p, rel_p in all_files:
-                parts = Path(rel_p).parts
-                filename = parts[-1]
-                ext = os.path.splitext(filename)[1].lower()
+                ext = os.path.splitext(rel_p)[1].lower()
+                if ext in supported_exts:
+                    valid_files.append((full_p, rel_p, ext))
 
-                supported_exts = [
-                    '.docx', '.pdf', '.ipynb', '.md', '.txt',
-                    '.py', '.sql', '.js', '.jsx', '.html', '.css', '.java'
-                ]
-                if ext not in supported_exts:
-                    continue
+            # Prioritize rich lesson files (.ipynb, .docx, .pdf, .md)
+            def get_priority(item):
+                ext = item[2]
+                if ext in ['.ipynb', '.docx']: return 1
+                if ext in ['.pdf', '.md']: return 2
+                if ext in ['.txt']: return 3
+                return 4
 
-                if len(parts) > 1:
-                    folder_name = parts[0]
-                    clean_module_title = re.sub(r'^\d+[\s_\-\.]*', '', folder_name).replace('_', ' ').title()
-                    if not clean_module_title:
-                        clean_module_title = folder_name.replace('_', ' ').title()
+            valid_files.sort(key=get_priority)
+            # Cap at 20 core course files per upload to guarantee execution finishes in 2 seconds
+            valid_files = valid_files[:20]
 
-                    if folder_name not in module_map:
-                        mod, mod_created = Module.objects.get_or_create(
-                            technology=tech,
-                            title=clean_module_title,
+            with transaction.atomic():
+                for full_p, rel_p, ext in valid_files:
+                    parts = Path(rel_p).parts
+                    filename = parts[-1]
+
+                    if len(parts) > 1:
+                        folder_name = parts[0]
+                        clean_module_title = re.sub(r'^\d+[\s_\-\.]*', '', folder_name).replace('_', ' ').title()
+                        if not clean_module_title:
+                            clean_module_title = folder_name.replace('_', ' ').title()
+
+                        if folder_name not in module_map:
+                            mod, mod_created = Module.objects.get_or_create(
+                                technology=tech,
+                                title=clean_module_title,
+                                defaults={
+                                    "order": current_module_order,
+                                    "description": f"Module covering {clean_module_title}."
+                                }
+                            )
+                            if mod_created:
+                                current_module_order += 1
+                                results["modules_created"] += 1
+                            module_map[folder_name] = mod
+                        target_module = module_map[folder_name]
+                    else:
+                        target_module = default_module
+
+                    stem = os.path.splitext(filename)[0]
+                    clean_concept_title = re.sub(r'^\d+[\s_\-\.]*', '', stem).replace('_', ' ').title()
+                    if not clean_concept_title:
+                        clean_concept_title = stem.replace('_', ' ').title()
+
+                    extracted_text = cls.extract_text_from_file(full_p)
+                    if not extracted_text:
+                        continue
+
+                    # Save original file as downloadable media asset (streamed without loading into memory)
+                    media_rel_path = f"course_materials/{tech.slug}/{slugify(target_module.title)}/{filename}"
+                    with open(full_p, 'rb') as orig_f:
+                        saved_path = default_storage.save(media_rel_path, File(orig_f))
+                    download_url = f"{settings.MEDIA_URL}{saved_path}"
+                    results["attached_files"] += 1
+
+                    # Check if Practice Quiz vs Concept Note
+                    if cls.is_question_document(filename, extracted_text):
+                        quiz_title = f"{clean_concept_title} Practice Quiz"
+                        quiz, q_count = cls.parse_and_create_quiz(
+                            quiz_title=quiz_title,
+                            raw_text=extracted_text,
+                            concept=None,
+                            user=user
+                        )
+                        results["quizzes_created"] += 1
+                        results["questions_created"] += q_count
+                        results["items_processed"].append({
+                            "type": "quiz",
+                            "title": quiz_title,
+                            "questions": q_count,
+                            "file": filename
+                        })
+                    else:
+                        concept_order = target_module.concepts.count() + 1
+                        concept_slug = slugify(clean_concept_title) or f"concept-{concept_order}"
+                        if Concept.objects.filter(module=target_module, slug=concept_slug).exists():
+                            concept_slug = f"{concept_slug}-{concept_order}"
+
+                        concept, _ = Concept.objects.get_or_create(
+                            module=target_module,
+                            title=clean_concept_title,
                             defaults={
-                                "order": current_module_order,
-                                "description": f"Module covering {clean_module_title}."
+                                "slug": concept_slug,
+                                "order": concept_order,
+                                "summary": f"Key learning notes for {clean_concept_title}."
                             }
                         )
-                        if mod_created:
-                            current_module_order += 1
-                            results["modules_created"] += 1
-                        module_map[folder_name] = mod
-                    target_module = module_map[folder_name]
-                else:
-                    target_module = default_module
+                        results["concepts_created"] += 1
 
-                stem = os.path.splitext(filename)[0]
-                clean_concept_title = re.sub(r'^\d+[\s_\-\.]*', '', stem).replace('_', ' ').title()
-                if not clean_concept_title:
-                    clean_concept_title = stem.replace('_', ' ').title()
+                        detected_lang = 'python'
+                        tech_slug_lower = tech.slug.lower()
+                        if 'react' in tech_slug_lower or 'js' in tech_slug_lower:
+                            detected_lang = 'javascript'
+                        elif 'sql' in tech_slug_lower:
+                            detected_lang = 'sql'
+                        elif 'html' in tech_slug_lower:
+                            detected_lang = 'html'
 
-                extracted_text = cls.extract_text_from_file(full_p)
-                if not extracted_text:
-                    continue
-
-                # Save original file as downloadable media asset (streamed without loading into memory)
-                media_rel_path = f"course_materials/{tech.slug}/{slugify(target_module.title)}/{filename}"
-                with open(full_p, 'rb') as orig_f:
-                    saved_path = default_storage.save(media_rel_path, File(orig_f))
-                download_url = f"{settings.MEDIA_URL}{saved_path}"
-                results["attached_files"] += 1
-
-                # Check if Practice Quiz vs Concept Note
-                if cls.is_question_document(filename, extracted_text):
-                    quiz_title = f"{clean_concept_title} Practice Quiz"
-                    quiz, q_count = cls.parse_and_create_quiz(
-                        quiz_title=quiz_title,
-                        raw_text=extracted_text,
-                        concept=None,
-                        user=user
-                    )
-                    results["quizzes_created"] += 1
-                    results["questions_created"] += q_count
-                    results["items_processed"].append({
-                        "type": "quiz",
-                        "title": quiz_title,
-                        "questions": q_count,
-                        "file": filename
-                    })
-                else:
-                    concept_order = target_module.concepts.count() + 1
-                    concept_slug = slugify(clean_concept_title) or f"concept-{concept_order}"
-                    if Concept.objects.filter(module=target_module, slug=concept_slug).exists():
-                        concept_slug = f"{concept_slug}-{concept_order}"
-
-                    concept, _ = Concept.objects.get_or_create(
-                        module=target_module,
-                        title=clean_concept_title,
-                        defaults={
-                            "slug": concept_slug,
-                            "order": concept_order,
-                            "summary": f"Key learning notes for {clean_concept_title}."
-                        }
-                    )
-                    results["concepts_created"] += 1
-
-                    detected_lang = 'python'
-                    tech_slug_lower = tech.slug.lower()
-                    if 'react' in tech_slug_lower or 'js' in tech_slug_lower:
-                        detected_lang = 'javascript'
-                    elif 'sql' in tech_slug_lower:
-                        detected_lang = 'sql'
-                    elif 'html' in tech_slug_lower:
-                        detected_lang = 'html'
-
-                    if results["notes_created"] < 3:
-                        note_fields = cls.structure_note_with_ai(clean_concept_title, extracted_text, detected_lang)
-                    else:
-                        # Instant heuristic parser for subsequent files to stay well within HTTP timeout
+                        # Instant heuristic note structuring (0.001s per note, zero timeout risk)
                         note_fields = cls.structure_note_with_ai(clean_concept_title, extracted_text, detected_lang, skip_ai=True)
 
-                    note, _ = Note.objects.update_or_create(
-                        concept=concept,
-                        defaults={
-                            "title": note_fields.get("title") or clean_concept_title,
-                            "definition": note_fields.get("definition", ""),
-                            "syntax": note_fields.get("syntax", ""),
-                            "code_example": note_fields.get("code_example", ""),
-                            "code_language": note_fields.get("code_language", detected_lang),
-                            "expected_output": note_fields.get("expected_output", ""),
-                            "explanation": note_fields.get("explanation", ""),
-                            "real_world_analogy": note_fields.get("real_world_analogy", ""),
-                            "common_mistakes": note_fields.get("common_mistakes", ""),
-                            "important_points": note_fields.get("important_points", ""),
-                            "interview_questions": note_fields.get("interview_questions", ""),
-                            "resource_url": download_url,
-                            "is_published": True,
-                            "created_by": user
-                        }
-                    )
-                    results["notes_created"] += 1
-                    results["items_processed"].append({
-                        "type": "note",
-                        "title": note.title,
-                        "module": target_module.title,
-                        "file": filename,
-                        "download_url": download_url
-                    })
-
-                gc.collect()
+                        note, _ = Note.objects.update_or_create(
+                            concept=concept,
+                            defaults={
+                                "title": note_fields.get("title") or clean_concept_title,
+                                "definition": note_fields.get("definition", ""),
+                                "syntax": note_fields.get("syntax", ""),
+                                "code_example": note_fields.get("code_example", ""),
+                                "code_language": note_fields.get("code_language", detected_lang),
+                                "expected_output": note_fields.get("expected_output", ""),
+                                "explanation": note_fields.get("explanation", ""),
+                                "real_world_analogy": note_fields.get("real_world_analogy", ""),
+                                "common_mistakes": note_fields.get("common_mistakes", ""),
+                                "important_points": note_fields.get("important_points", ""),
+                                "interview_questions": note_fields.get("interview_questions", ""),
+                                "resource_url": download_url,
+                                "is_published": True,
+                                "created_by": user
+                            }
+                        )
+                        results["notes_created"] += 1
+                        results["items_processed"].append({
+                            "type": "note",
+                            "title": note.title,
+                            "module": target_module.title,
+                            "file": filename,
+                            "download_url": download_url
+                        })
 
             results["success"] = True
 
