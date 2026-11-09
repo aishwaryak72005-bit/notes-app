@@ -4,27 +4,13 @@ import { useAuth } from '../../context/AuthContext';
 import { BookOpen, Code2, Lock, User, AlertCircle, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 const LoginPage = () => {
-  const [username, setUsername] = useState('learner_aishu');
-  const [password, setPassword] = useState('student123');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-
-  const handleDemoFill = (role) => {
-    setError('');
-    if (role === 'student') {
-      setUsername('learner_aishu');
-      setPassword('student123');
-    } else if (role === 'teacher') {
-      setUsername('teacher_sarah');
-      setPassword('teacher123');
-    } else {
-      setUsername('admin');
-      setPassword('admin123');
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -72,52 +58,11 @@ const LoginPage = () => {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4">
         <div className="bg-white py-8 px-6 sm:px-10 rounded-3xl shadow-card border border-sage/40">
           <div className="mb-6">
-            <h2 className="text-xl font-bold text-charcoal">Sign In to Your Account</h2>
+            <h2 className="text-xl font-bold text-charcoal">Student Sign In</h2>
             <p className="text-sm text-muted mt-1">
-              Enter your credentials or choose a quick demo account.
+              Enter your student username and password to access your courses and notes.
             </p>
           </div>
-
-          {/* Quick 1-Click Demo Login */}
-          <div className="mb-6 p-3 bg-ivory/80 rounded-2xl border border-sage/50">
-            <p className="text-xs font-semibold text-muted mb-2 uppercase tracking-wide">
-              Quick 1-Click Demo Login:
-            </p>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => handleDemoFill('student')}
-                className={`px-3 py-2 text-xs font-medium rounded-xl border transition-all text-left flex items-center justify-between ${
-                  username === 'learner_aishu'
-                    ? 'bg-forest text-ivory border-forest shadow-sm'
-                    : 'bg-white text-charcoal border-sage/60 hover:bg-sage/20'
-                }`}
-              >
-                <div>
-                  <div className="font-bold">Student</div>
-                  <div className="text-[10px] opacity-80">learner_aishu</div>
-                </div>
-                {username === 'learner_aishu' && <CheckCircle2 className="w-3.5 h-3.5" />}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleDemoFill('teacher')}
-                className={`px-3 py-2 text-xs font-medium rounded-xl border transition-all text-left flex items-center justify-between ${
-                  username === 'teacher_sarah'
-                    ? 'bg-forest text-ivory border-forest shadow-sm'
-                    : 'bg-white text-charcoal border-sage/60 hover:bg-sage/20'
-                }`}
-              >
-                <div>
-                  <div className="font-bold">Trainer</div>
-                  <div className="text-[10px] opacity-80">teacher_sarah</div>
-                </div>
-                {username === 'teacher_sarah' && <CheckCircle2 className="w-3.5 h-3.5" />}
-              </button>
-            </div>
-          </div>
-
 
           {error && (
             <div className="mb-5 p-3.5 bg-red-50 border border-red-200 rounded-2xl flex items-start space-x-2 text-red-700 text-sm">

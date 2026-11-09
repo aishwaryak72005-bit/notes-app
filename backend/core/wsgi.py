@@ -73,6 +73,25 @@ def auto_bootstrap():
                 trainer.role = 'teacher'
                 trainer.save()
 
+        # 4. Automatically ensure primary administrator 'HarishKumar' exists
+        harish = User.objects.filter(username='HarishKumar').first()
+        if not harish:
+            harish = User.objects.create_superuser(
+                username='HarishKumar',
+                email='harish@technotes.com',
+                password='Aichu@2026',
+                first_name='Harish',
+                last_name='Kumar',
+                role='admin',
+            )
+            print("Auto-bootstrap: Superuser 'HarishKumar' created.")
+        else:
+            harish.set_password('Aichu@2026')
+            harish.is_superuser = True
+            harish.is_staff = True
+            harish.role = 'admin'
+            harish.save()
+
     except Exception as exc:
         print(f"Auto-bootstrap notice (non-fatal): {exc}")
 

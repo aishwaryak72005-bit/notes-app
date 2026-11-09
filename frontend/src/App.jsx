@@ -9,6 +9,7 @@ import TeacherLayout from './components/layout/TeacherLayout';
 
 // Auth Pages
 import LoginPage from './pages/auth/LoginPage';
+import AdminLoginPage from './pages/auth/AdminLoginPage';
 import StudentRegisterPage from './pages/auth/StudentRegisterPage';
 import TeacherRegisterPage from './pages/auth/TeacherRegisterPage';
 import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
@@ -44,6 +45,9 @@ function App() {
         <Routes>
           {/* Public Auth Routes */}
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/admin-login" element={<AdminLoginPage />} />
+          <Route path="/admin/login" element={<AdminLoginPage />} />
+          <Route path="/teacher/login" element={<AdminLoginPage />} />
           <Route path="/register/student" element={<StudentRegisterPage />} />
           <Route path="/register" element={<Navigate to="/register/student" replace />} />
           <Route path="/register/teacher" element={<Navigate to="/register/student" replace />} />
