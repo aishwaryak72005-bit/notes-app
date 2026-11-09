@@ -54,27 +54,31 @@ def generate_gemini_response(conversation, new_message_text, concept=None):
 
     # If valid Gemini API key is configured
     if api_key and len(api_key.strip()) > 10:
-        try:
-            genai.configure(api_key=api_key.strip())
-            model = genai.GenerativeModel(
-                model_name="gemini-1.5-flash",
-                system_instruction=system_instruction
-            )
+        models_to_try = ["gemini-2.5-flash", "gemini-flash-latest", "gemini-2.5-flash-lite", "gemini-1.5-flash"]
+        for m_name in models_to_try:
+            try:
+                genai.configure(api_key=api_key.strip())
+                model = genai.GenerativeModel(
+                    model_name=m_name,
+                    system_instruction=system_instruction
+                )
 
-            # Build chat history from conversation
-            history = []
-            for msg in conversation.messages.all().order_by('created_at')[:10]:
-                role = "user" if msg.sender == 'user' else "model"
-                history.append({
-                    "role": role,
-                    "parts": [msg.content]
-                })
+                # Build chat history from conversation
+                history = []
+                for msg in conversation.messages.all().order_by('created_at')[:10]:
+                    role = "user" if msg.sender == 'user' else "model"
+                    history.append({
+                        "role": role,
+                        "parts": [msg.content]
+                    })
 
-            chat = model.start_chat(history=history)
-            response = chat.send_message(new_message_text)
-            return response.text
-        except Exception as e:
-            print(f"Gemini API call failed: {e}. Falling back to Adaptive Tutor Engine.")
+                chat = model.start_chat(history=history)
+                response = chat.send_message(new_message_text)
+                if response and response.text:
+                    return response.text
+            except Exception as e:
+                print(f"Gemini API model {m_name} call failed: {e}. Trying next option.")
+                continue
 
     # High-quality Built-in Adaptive Tutor Engine (Ensures 100% reliability offline & online)
     return generate_adaptive_fallback_response(new_message_text, level, concept)
