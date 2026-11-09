@@ -16,6 +16,9 @@ import {
   BookOpen,
   UploadCloud,
   Sparkles,
+  Menu,
+  X,
+  GraduationCap,
 } from 'lucide-react';
 
 const TeacherLayout = () => {

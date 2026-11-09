@@ -13,6 +13,7 @@ import {
   Search,
   Bell,
   BookOpen,
+  Menu,
   X,
   Shield,
   HelpCircle,
