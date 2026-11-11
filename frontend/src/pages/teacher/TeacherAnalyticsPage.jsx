@@ -37,11 +37,11 @@ const TeacherAnalyticsPage = () => {
   if (loading) return <Loader message="Compiling educator analytics..." />;
 
   const categoryDistribution = [
-    { name: 'Programming', value: 3, color: '#244C35' },
-    { name: 'Frontend', value: 4, color: '#336148' },
-    { name: 'Backend', value: 2, color: '#528268' },
-    { name: 'Database', value: 3, color: '#74A58C' },
-    { name: 'AI & ML', value: 4, color: '#B8CEB3' },
+    { name: 'Programming', value: 3, color: '#2563EB' },
+    { name: 'Frontend', value: 4, color: '#3B82F6' },
+    { name: 'Backend', value: 2, color: '#1D4ED8' },
+    { name: 'Database', value: 3, color: '#60A5FA' },
+    { name: 'AI & ML', value: 4, color: '#FA812F' },
   ];
 
   const studentPerformance = [
@@ -54,10 +54,10 @@ const TeacherAnalyticsPage = () => {
   return (
     <div className="space-y-8 max-w-6xl mx-auto animate-fadeIn">
       <div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-forest-dark">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-black font-heading">
           Curriculum & Student Analytics
         </h1>
-        <p className="text-sm text-muted mt-1">
+        <p className="text-sm text-slate-500 font-roboto mt-1">
           Detailed overview of curriculum coverage, student assessment outcomes, and grade distributions.
         </p>
       </div>
@@ -65,32 +65,34 @@ const TeacherAnalyticsPage = () => {
       {/* Analytics Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Grade Distribution Bar Chart */}
-        <div className="bg-white rounded-3xl p-6 sm:p-7 shadow-card border border-sage/40 space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-sage/30">
+        <div className="bg-white rounded-3xl p-5 sm:p-7 shadow-card border border-slate-200 space-y-4">
+          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
             <div>
-              <h2 className="text-base font-bold text-charcoal">Student Quiz Score Distribution</h2>
-              <p className="text-xs text-muted">Number of students falling into each performance tier</p>
+              <h2 className="text-base font-bold text-black font-heading">Student Quiz Score Distribution</h2>
+              <p className="text-xs text-slate-500 font-roboto">Number of students falling into each performance tier</p>
             </div>
-            <BarChart3 className="w-5 h-5 text-forest" />
+            <div className="w-9 h-9 rounded-xl bg-blue-50 text-[#2563EB] flex items-center justify-center">
+              <BarChart3 className="w-5 h-5" />
+            </div>
           </div>
 
           <div className="h-64 w-full pt-4">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={studentPerformance}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#F2F3EF" vertical={false} />
-                <XAxis dataKey="gradeRange" tick={{ fontSize: 11, fill: '#737B72' }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 11, fill: '#737B72' }} axisLine={false} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
+                <XAxis dataKey="gradeRange" tick={{ fontSize: 11, fill: '#64748B' }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 11, fill: '#64748B' }} axisLine={false} tickLine={false} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#153B2A',
-                    color: '#F7F3E9',
-                    borderRadius: '1rem',
-                    border: 'none',
+                    backgroundColor: '#0B0F17',
+                    color: '#F8FAFC',
+                    borderRadius: '0.85rem',
+                    border: '1px solid #27272A',
                     fontSize: '12px',
                   }}
-                  itemStyle={{ color: '#F7F3E9' }}
+                  itemStyle={{ color: '#F8FAFC' }}
                 />
-                <Bar dataKey="count" name="Students" fill="#244C35" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="count" name="Students" fill="#2563EB" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

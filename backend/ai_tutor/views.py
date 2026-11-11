@@ -44,7 +44,7 @@ class ConversationListCreateView(APIView):
         )
 
         # Seed initial greeting from AI Tutor
-        greeting_text = f"Hello {request.user.first_name or 'there'}! 👋 I am your TechNotes AI Learning Assistant. "
+        greeting_text = f"Hello {request.user.first_name or 'there'}! 👋 I am your SyntaxHawk AI Learning Assistant. "
         if concept:
             greeting_text += f"We are currently exploring **{concept.title}** ({concept.module.technology.name}). How can I help you understand this concept better today?"
         else:

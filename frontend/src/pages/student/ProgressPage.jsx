@@ -120,71 +120,76 @@ const ProgressPage = () => {
 
       {/* Recharts Analytics Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Technology-wise Progress Bar Chart */}
-        <div className="bg-white rounded-3xl p-6 sm:p-7 shadow-card border border-sage/40 space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-sage/30">
+        {/* Technology-wise Progress Bar Chart in Graph Blue */}
+        <div className="bg-white rounded-3xl p-5 sm:p-7 shadow-card border border-slate-200 space-y-4">
+          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
             <div>
-              <h2 className="text-base font-bold text-charcoal">Technology Completion Rate</h2>
-              <p className="text-xs text-muted">Percentage of concepts completed by technology</p>
+              <h2 className="text-base font-bold text-black font-heading">Technology Completion Rate</h2>
+              <p className="text-xs text-slate-500 font-roboto">Percentage of concepts completed by technology</p>
             </div>
-            <BarChart3 className="w-5 h-5 text-forest" />
+            <div className="w-9 h-9 rounded-xl bg-blue-50 text-[#2563EB] flex items-center justify-center">
+              <BarChart3 className="w-5 h-5" />
+            </div>
           </div>
 
           <div className="h-64 w-full pt-4">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={techData.slice(0, 6)}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#F2F3EF" vertical={false} />
-                <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#737B72' }} axisLine={false} tickLine={false} />
-                <YAxis unit="%" tick={{ fontSize: 11, fill: '#737B72' }} axisLine={false} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
+                <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#64748B' }} axisLine={false} tickLine={false} />
+                <YAxis unit="%" tick={{ fontSize: 11, fill: '#64748B' }} axisLine={false} tickLine={false} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#153B2A',
-                    color: '#F7F3E9',
-                    borderRadius: '1rem',
-                    border: 'none',
+                    backgroundColor: '#0B0F17',
+                    color: '#F8FAFC',
+                    borderRadius: '0.85rem',
+                    border: '1px solid #27272A',
                     fontSize: '12px',
                   }}
-                  itemStyle={{ color: '#F7F3E9' }}
+                  itemStyle={{ color: '#60A5FA' }}
                 />
-                <Bar dataKey="completion_percentage" name="Completion" fill="#244C35" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="completion_percentage" name="Completion" fill="#2563EB" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Quiz Performance History Line Chart */}
-        <div className="bg-white rounded-3xl p-6 sm:p-7 shadow-card border border-sage/40 space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-sage/30">
+        {/* Quiz Performance History Line Chart in Graph Blue */}
+        <div className="bg-white rounded-3xl p-5 sm:p-7 shadow-card border border-slate-200 space-y-4">
+          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
             <div>
-              <h2 className="text-base font-bold text-charcoal">Quiz Performance Trend</h2>
-              <p className="text-xs text-muted">Score trajectory across recent assessment attempts</p>
+              <h2 className="text-base font-bold text-black font-heading">Quiz Performance Trend</h2>
+              <p className="text-xs text-slate-500 font-roboto">Score trajectory across recent assessment attempts</p>
             </div>
-            <TrendingUp className="w-5 h-5 text-forest" />
+            <div className="w-9 h-9 rounded-xl bg-blue-50 text-[#2563EB] flex items-center justify-center">
+              <TrendingUp className="w-5 h-5" />
+            </div>
           </div>
 
           <div className="h-64 w-full pt-4">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={performanceHistory}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#F2F3EF" vertical={false} />
-                <XAxis dataKey="attempt" tick={{ fontSize: 11, fill: '#737B72' }} axisLine={false} tickLine={false} />
-                <YAxis domain={[0, 100]} unit="%" tick={{ fontSize: 11, fill: '#737B72' }} axisLine={false} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
+                <XAxis dataKey="attempt" tick={{ fontSize: 11, fill: '#64748B' }} axisLine={false} tickLine={false} />
+                <YAxis domain={[0, 100]} unit="%" tick={{ fontSize: 11, fill: '#64748B' }} axisLine={false} tickLine={false} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#153B2A',
-                    color: '#F7F3E9',
-                    borderRadius: '1rem',
-                    border: 'none',
+                    backgroundColor: '#0B0F17',
+                    color: '#F8FAFC',
+                    borderRadius: '0.85rem',
+                    border: '1px solid #27272A',
                     fontSize: '12px',
                   }}
-                  itemStyle={{ color: '#F7F3E9' }}
+                  itemStyle={{ color: '#F8FAFC' }}
                 />
                 <Line
                   type="monotone"
                   dataKey="score"
                   name="Score %"
-                  stroke="#244C35"
+                  stroke="#2563EB"
                   strokeWidth={3}
-                  dot={{ r: 4, fill: '#F59E0B', strokeWidth: 2 }}
+                  dot={{ r: 4, fill: '#FA812F', stroke: '#0B0F17', strokeWidth: 2 }}
+                  activeDot={{ r: 6, fill: '#FA812F' }}
                 />
               </LineChart>
             </ResponsiveContainer>

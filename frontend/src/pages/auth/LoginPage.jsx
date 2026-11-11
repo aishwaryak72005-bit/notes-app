@@ -32,21 +32,21 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-ivory flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#FAFAF9] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        {/* Brand Logo matching reference screenshot */}
+        {/* Brand Logo */}
         <div className="inline-flex items-center justify-center space-x-3 mb-3">
-          <div className="w-12 h-12 bg-forest rounded-2xl flex items-center justify-center text-ivory shadow-md">
-            <BookOpen className="w-6 h-6" />
+          <div className="w-12 h-12 bg-gradient-to-br from-[#FA812F] to-[#F59E0B] rounded-2xl flex items-center justify-center text-black font-black text-2xl shadow-lg shadow-[#FA812F]/20 font-heading">
+            S
           </div>
-          <span className="text-3xl font-extrabold tracking-tight text-forest-dark font-serif">
-            TechNotes
+          <span className="text-3xl font-extrabold tracking-tight text-black font-heading">
+            SyntaxHawk
           </span>
         </div>
-        <p className="text-xs uppercase tracking-widest text-muted font-semibold">
-          Technical Learning Platform
+        <p className="text-xs uppercase tracking-widest text-slate-500 font-semibold font-roboto">
+          Next-Gen Technical Learning Platform
         </p>
-        <div className="mt-2 inline-flex items-center space-x-2 text-xs text-forest bg-sage/60 px-3 py-1 rounded-full font-medium">
+        <div className="mt-2 inline-flex items-center space-x-2 text-xs text-[#FA812F] bg-amber-50 px-3 py-1 rounded-full font-bold font-roboto border border-amber-200">
           <span>Learn</span>
           <span>•</span>
           <span>Understand</span>
@@ -55,17 +55,17 @@ const LoginPage = () => {
         </div>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4">
-        <div className="bg-white py-8 px-6 sm:px-10 rounded-3xl shadow-card border border-sage/40">
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white py-8 px-6 sm:px-10 rounded-3xl shadow-card border border-slate-200">
           <div className="mb-6">
-            <h2 className="text-xl font-bold text-charcoal">Student Sign In</h2>
-            <p className="text-sm text-muted mt-1">
+            <h2 className="text-xl font-bold text-black font-heading">Student Sign In</h2>
+            <p className="text-xs sm:text-sm text-slate-500 font-roboto mt-1">
               Enter your student username and password to access your courses and notes.
             </p>
           </div>
 
           {error && (
-            <div className="mb-5 p-3.5 bg-red-50 border border-red-200 rounded-2xl flex items-start space-x-2 text-red-700 text-sm">
+            <div className="mb-5 p-3.5 bg-red-50 border border-red-200 rounded-2xl flex items-start space-x-2 text-red-700 text-sm font-body">
               <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
               <span>{error}</span>
             </div>
@@ -73,11 +73,11 @@ const LoginPage = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-charcoal uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-black uppercase tracking-wider mb-1.5 font-roboto">
                 Username
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                   <User className="w-4 h-4" />
                 </div>
                 <input
@@ -86,25 +86,25 @@ const LoginPage = () => {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Enter your username"
-                  className="w-full pl-10 pr-4 py-2.5 bg-lightgrey/50 border border-sage/60 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-forest focus:bg-white transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#FA812F] focus:bg-white transition-all text-black"
                 />
               </div>
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-semibold text-charcoal uppercase tracking-wider">
+                <label className="block text-xs font-semibold text-black uppercase tracking-wider font-roboto">
                   Password
                 </label>
                 <Link
                   to="/forgot-password"
-                  className="text-xs text-forest hover:text-forest-dark font-medium underline"
+                  className="text-xs text-[#FA812F] hover:text-[#C85710] font-medium font-roboto"
                 >
                   Forgot password?
                 </Link>
               </div>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                   <Lock className="w-4 h-4" />
                 </div>
                 <input
@@ -113,7 +113,7 @@ const LoginPage = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-10 pr-4 py-2.5 bg-lightgrey/50 border border-sage/60 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-forest focus:bg-white transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#FA812F] focus:bg-white transition-all text-black"
                 />
               </div>
             </div>
@@ -121,7 +121,7 @@ const LoginPage = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-2 py-3 px-4 bg-forest hover:bg-forest-dark text-ivory font-semibold rounded-xl text-sm shadow-md transition-all flex items-center justify-center space-x-2 disabled:opacity-70"
+              className="w-full mt-2 py-3 px-4 bg-gradient-to-r from-[#FA812F] to-[#E06A1A] hover:brightness-105 text-black font-extrabold rounded-xl text-sm shadow-md transition-all flex items-center justify-center space-x-2 disabled:opacity-70 font-heading"
             >
               {isLoading ? (
                 <span>Signing In...</span>
@@ -134,12 +134,12 @@ const LoginPage = () => {
             </button>
           </form>
 
-          <div className="mt-6 pt-6 border-t border-sage/30 text-center space-y-2">
-            <p className="text-xs text-muted">
-              New to TechNotes?
+          <div className="mt-6 pt-6 border-t border-slate-100 text-center space-y-2">
+            <p className="text-xs text-slate-500 font-roboto">
+              New to SyntaxHawk?
             </p>
-            <div className="flex justify-center text-xs font-semibold">
-              <Link to="/register/student" className="text-forest hover:underline">
+            <div className="flex justify-center text-xs font-semibold font-body">
+              <Link to="/register/student" className="text-[#FA812F] hover:underline">
                 Create a Student Account →
               </Link>
             </div>

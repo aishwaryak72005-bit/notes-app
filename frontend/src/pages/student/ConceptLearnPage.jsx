@@ -41,6 +41,7 @@ const ConceptLearnPage = () => {
   const [isCompleted, setIsCompleted] = useState(false);
   const [markingComplete, setMarkingComplete] = useState(false);
   const [showDocViewer, setShowDocViewer] = useState(false);
+  const [mobileTopicsOpen, setMobileTopicsOpen] = useState(false);
 
   useEffect(() => {
     const fetchConceptNotes = async () => {
@@ -116,6 +117,7 @@ const ConceptLearnPage = () => {
 
   const navigateToConcept = (concept) => {
     navigate(`/learn/${techData?.slug}/${activeModule?.slug}/${concept.slug}`);
+    setMobileTopicsOpen(false);
   };
 
   if (loading) {
@@ -123,56 +125,70 @@ const ConceptLearnPage = () => {
   }
 
   return (
-    <div className="space-y-6 animate-fadeIn max-w-7xl mx-auto">
-      {/* Breadcrumb Header matching mockup */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-sage/40">
-        <div className="flex items-center space-x-2 text-xs text-muted">
-          <Link to="/technologies" className="hover:text-forest">Technologies</Link>
+    <div className="space-y-6 animate-fadeIn max-w-7xl mx-auto selection:bg-brand selection:text-white">
+      {/* Breadcrumb Header matching SyntaxHawk theme */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/10">
+        <div className="flex flex-wrap items-center gap-1.5 text-xs text-gray-400 font-sans">
+          <Link to="/technologies" className="hover:text-brand transition-colors">Technologies</Link>
           <span>/</span>
-          <Link to={`/technologies/${techData?.slug}`} className="hover:text-forest font-semibold text-charcoal">
+          <Link to={`/technologies/${techData?.slug}`} className="hover:text-brand font-semibold text-white transition-colors">
             {techData?.name}
           </Link>
           <span>/</span>
-          <span>{activeModule?.title}</span>
+          <span className="text-gray-300">{activeModule?.title}</span>
           <span>/</span>
-          <span className="text-forest font-bold">{activeConcept?.title}</span>
+          <span className="text-brand font-bold">{activeConcept?.title}</span>
         </div>
 
         {/* Action Buttons: Ask AI & Practise Quiz */}
         <div className="flex items-center space-x-2">
           <Link
             to={`/ai-tutor?concept=${activeConcept?.id}&title=${encodeURIComponent(activeConcept?.title || '')}`}
-            className="px-3.5 py-2 bg-sage/50 hover:bg-sage text-forest-dark rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition-all border border-sage"
+            className="px-3.5 py-2 bg-brand/10 hover:bg-brand/20 text-brand rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition-all border border-brand/30"
           >
-            <Sparkles className="w-3.5 h-3.5 text-forest" />
+            <Sparkles className="w-3.5 h-3.5 text-brand" />
             <span>Ask AI Tutor</span>
           </Link>
 
           <Link
             to={`/quiz/${activeConcept?.id}`}
-            className="px-4 py-2 bg-forest hover:bg-forest-dark text-ivory rounded-xl text-xs font-semibold flex items-center space-x-1.5 shadow-sm transition-all"
+            className="px-4 py-2 bg-brand hover:bg-brand-dark text-white rounded-xl text-xs font-semibold flex items-center space-x-1.5 shadow-lg shadow-brand/20 transition-all font-heading"
           >
-            <HelpCircle className="w-3.5 h-3.5 text-sage" />
+            <HelpCircle className="w-3.5 h-3.5" />
             <span>Practise Quiz</span>
           </Link>
         </div>
       </div>
 
+      {/* Mobile Toggle Button for Topics */}
+      <button
+        onClick={() => setMobileTopicsOpen(!mobileTopicsOpen)}
+        className="lg:hidden w-full flex items-center justify-between p-3.5 bg-[#111827] border border-white/10 rounded-2xl text-xs font-semibold text-white hover:border-brand/40 transition-colors"
+      >
+        <div className="flex items-center space-x-2">
+          <BookOpen className="w-4 h-4 text-brand" />
+          <span>{activeModule?.title} — Topics ({currentConcepts.length})</span>
+        </div>
+        <span className="text-brand text-[11px] font-bold font-small">
+          {mobileTopicsOpen ? 'Hide Topics ▲' : 'Browse Topics ▼'}
+        </span>
+      </button>
+
       {/* Main Learning Workspace Split: Concepts Navigator on Left, Rich Note on Right */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
-        {/* Left: Module Concepts Sidebar Navigator (Matching Screenshot) */}
-        <div className="bg-white rounded-3xl p-5 shadow-card border border-sage/40 space-y-4">
-          <div className="pb-3 border-b border-sage/30 flex items-center justify-between">
+        {/* Left: Module Concepts Sidebar Navigator */}
+        <div className={`${mobileTopicsOpen ? 'block' : 'hidden'} lg:block bg-[#111827] rounded-3xl p-5 shadow-xl border border-white/10 space-y-4`}>
+          <div className="pb-3 border-b border-white/10 flex items-center justify-between">
             <div>
-              <span className="text-[11px] font-bold text-muted uppercase tracking-wider">Module</span>
-              <h2 className="text-sm font-bold text-forest-dark">{activeModule?.title}</h2>
+              <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider font-small">Module</span>
+              <h2 className="text-sm font-bold text-white font-heading">{activeModule?.title}</h2>
             </div>
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-sage/40 text-forest">
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-brand/20 text-brand font-small">
               {currentConcepts.length} Topics
             </span>
           </div>
 
-          <div className="space-y-1">
+          <div className="space-y-1 max-h-[60vh] lg:max-h-none overflow-y-auto">
             {currentConcepts.map((conc, idx) => {
               const isActive = conc.id === activeConcept?.id;
               return (
@@ -181,46 +197,46 @@ const ConceptLearnPage = () => {
                   onClick={() => navigateToConcept(conc)}
                   className={`w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-medium transition-all flex items-center justify-between ${
                     isActive
-                      ? 'bg-sage/70 text-forest-dark font-bold shadow-xs border border-sage'
-                      : 'text-charcoal hover:bg-ivory hover:text-forest'
+                      ? 'bg-brand/15 text-brand font-bold shadow-xs border border-brand/40'
+                      : 'text-gray-300 hover:bg-white/5 hover:text-white'
                   }`}
                 >
                   <div className="flex items-center space-x-2.5 truncate">
                     <span className={`w-5 h-5 rounded-lg flex items-center justify-center text-[10px] font-bold ${
-                      isActive ? 'bg-forest text-ivory' : 'bg-lightgrey text-muted'
+                      isActive ? 'bg-brand text-white' : 'bg-[#181924] text-gray-400 border border-white/5'
                     }`}>
                       {idx + 1}
                     </span>
                     <span className="truncate">{conc.title}</span>
                   </div>
-                  {isActive && <ChevronRight className="w-3.5 h-3.5 text-forest flex-shrink-0" />}
+                  {isActive && <ChevronRight className="w-3.5 h-3.5 text-brand flex-shrink-0" />}
                 </button>
               );
             })}
           </div>
 
-          <div className="pt-3 border-t border-sage/30">
+          <div className="pt-3 border-t border-white/10">
             <Link
               to={`/technologies/${techData?.slug}`}
-              className="text-xs text-forest font-semibold hover:underline block text-center"
+              className="text-xs text-brand font-semibold hover:underline block text-center font-sans"
             >
               ← Back to All Modules
             </Link>
           </div>
         </div>
 
-        {/* Right: Notes Viewer (Matching Concept Notes in Screenshot) */}
-        <div className="lg:col-span-3 bg-white rounded-3xl p-6 sm:p-8 shadow-card border border-sage/40 space-y-6">
+        {/* Right: Notes Viewer */}
+        <div className="lg:col-span-3 bg-[#111827] rounded-3xl p-5 sm:p-8 shadow-2xl border border-white/10 space-y-6">
           {/* Header Row: Title, Prev/Next Navigation, Bookmark */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-sage/30">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
             <div>
-              <span className="px-3 py-1 rounded-full text-[11px] font-semibold bg-sage/40 text-forest uppercase tracking-wider">
+              <span className="px-3 py-1 rounded-full text-[11px] font-semibold bg-brand/20 text-brand uppercase tracking-wider font-small">
                 Concept Notes
               </span>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-charcoal mt-2">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-white mt-2 font-heading">
                 {note?.title || activeConcept?.title}
               </h1>
-              <div className="flex items-center space-x-4 text-xs text-muted mt-1.5">
+              <div className="flex items-center space-x-4 text-xs text-gray-400 mt-1.5 font-small">
                 <span className="flex items-center space-x-1">
                   <Clock className="w-3.5 h-3.5" />
                   <span>{activeConcept?.estimated_minutes || 10} min read</span>
@@ -239,18 +255,18 @@ const ConceptLearnPage = () => {
                 title={isBookmarked ? 'Remove Bookmark' : 'Bookmark this Concept'}
                 className={`p-2.5 rounded-2xl border transition-all ${
                   isBookmarked
-                    ? 'bg-amber-50 text-amber-600 border-amber-300'
-                    : 'bg-white text-muted border-sage/60 hover:text-charcoal hover:bg-sage/20'
+                    ? 'bg-brand/20 text-brand border-brand/50'
+                    : 'bg-[#181924] text-gray-400 border-white/10 hover:text-white hover:bg-white/5'
                 }`}
               >
                 <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-current' : ''}`} />
               </button>
 
-              <div className="flex items-center space-x-1 bg-ivory rounded-2xl p-1 border border-sage/50">
+              <div className="flex items-center space-x-1 bg-[#181924] rounded-2xl p-1 border border-white/10">
                 <button
                   disabled={!prevConcept}
                   onClick={() => prevConcept && navigateToConcept(prevConcept)}
-                  className="p-1.5 rounded-xl hover:bg-white text-charcoal disabled:opacity-30 disabled:hover:bg-transparent"
+                  className="p-1.5 rounded-xl hover:bg-white/10 text-gray-300 disabled:opacity-30 disabled:hover:bg-transparent"
                   title="Previous Concept"
                 >
                   <ChevronLeft className="w-4 h-4" />
@@ -258,7 +274,7 @@ const ConceptLearnPage = () => {
                 <button
                   disabled={!nextConcept}
                   onClick={() => nextConcept && navigateToConcept(nextConcept)}
-                  className="p-1.5 rounded-xl hover:bg-white text-charcoal disabled:opacity-30 disabled:hover:bg-transparent"
+                  className="p-1.5 rounded-xl hover:bg-white/10 text-gray-300 disabled:opacity-30 disabled:hover:bg-transparent"
                   title="Next Concept"
                 >
                   <ChevronRight className="w-4 h-4" />
@@ -269,11 +285,11 @@ const ConceptLearnPage = () => {
 
           {/* 1. Simple Definition */}
           {note?.definition && (
-            <div className="p-4 sm:p-5 rounded-2xl bg-sage/20 border border-sage/60">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-forest mb-1">
+            <div className="p-4 sm:p-5 rounded-2xl bg-brand/10 border border-brand/30">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-brand mb-1 font-small">
                 Definition
               </h2>
-              <p className="text-sm sm:text-base font-medium text-charcoal leading-relaxed">
+              <p className="text-sm sm:text-base font-medium text-white leading-relaxed font-sans">
                 {note.definition}
               </p>
             </div>
@@ -282,10 +298,10 @@ const ConceptLearnPage = () => {
           {/* 2. Syntax */}
           {note?.syntax && (
             <div>
-              <h2 className="text-xs font-bold uppercase tracking-wider text-muted mb-2">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2 font-small">
                 Syntax
               </h2>
-              <div className="p-3.5 rounded-2xl bg-lightgrey/60 border border-sage/60 font-mono text-xs sm:text-sm text-forest-dark font-semibold">
+              <div className="p-3.5 rounded-2xl bg-[#181924] border border-white/10 font-mono text-xs sm:text-sm text-brand font-semibold overflow-x-auto">
                 <code>{note.syntax}</code>
               </div>
             </div>
@@ -294,7 +310,7 @@ const ConceptLearnPage = () => {
           {/* 3. Code Example & Expected Output */}
           {note?.code_example && (
             <div>
-              <h2 className="text-xs font-bold uppercase tracking-wider text-muted mb-2">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2 font-small">
                 Code Example
               </h2>
               <CodeBlock
@@ -305,10 +321,10 @@ const ConceptLearnPage = () => {
 
               {note?.expected_output && (
                 <div className="mt-3">
-                  <h3 className="text-[11px] font-bold uppercase tracking-wider text-muted mb-1.5">
+                  <h3 className="text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5 font-small">
                     Expected Output
                   </h3>
-                  <div className="p-3.5 rounded-2xl bg-forest-deep text-sage-light font-mono text-xs border border-forest-border/40 whitespace-pre">
+                  <div className="p-3.5 rounded-2xl bg-[#090A0F] text-emerald-400 font-mono text-xs border border-white/10 whitespace-pre overflow-x-auto">
                     {note.expected_output}
                   </div>
                 </div>
@@ -319,11 +335,11 @@ const ConceptLearnPage = () => {
           {/* 4. Detailed Explanation */}
           {note?.explanation && (
             <div className="space-y-2 pt-2">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-muted">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-gray-400 font-small">
                 Detailed Explanation
               </h2>
               <div
-                className="text-sm text-charcoal leading-relaxed space-y-3 prose max-w-none"
+                className="text-sm text-gray-300 leading-relaxed space-y-3 prose prose-invert max-w-none font-sans"
                 dangerouslySetInnerHTML={{ __html: note.explanation }}
               />
             </div>
@@ -331,13 +347,13 @@ const ConceptLearnPage = () => {
 
           {/* 5. Real-World Analogy */}
           {note?.real_world_analogy && (
-            <div className="p-4 sm:p-5 rounded-2xl bg-amber-50/70 border border-amber-200/80 flex items-start space-x-3">
-              <Lightbulb className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+            <div className="p-4 sm:p-5 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-start space-x-3">
+              <Lightbulb className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
               <div>
-                <h2 className="text-xs font-bold uppercase tracking-wider text-amber-900 mb-1">
+                <h2 className="text-xs font-bold uppercase tracking-wider text-amber-400 mb-1 font-small">
                   Real-World Analogy
                 </h2>
-                <p className="text-xs sm:text-sm text-amber-950 leading-relaxed">
+                <p className="text-xs sm:text-sm text-amber-200 leading-relaxed font-sans">
                   {note.real_world_analogy}
                 </p>
               </div>
@@ -346,13 +362,13 @@ const ConceptLearnPage = () => {
 
           {/* 6. Common Mistakes */}
           {note?.common_mistakes && (
-            <div className="p-4 sm:p-5 rounded-2xl bg-red-50/70 border border-red-200/80 flex items-start space-x-3">
-              <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+            <div className="p-4 sm:p-5 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-start space-x-3">
+              <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
               <div>
-                <h2 className="text-xs font-bold uppercase tracking-wider text-red-900 mb-1">
+                <h2 className="text-xs font-bold uppercase tracking-wider text-red-400 mb-1 font-small">
                   Common Mistakes to Avoid
                 </h2>
-                <p className="text-xs sm:text-sm text-red-950 leading-relaxed whitespace-pre-line">
+                <p className="text-xs sm:text-sm text-red-200 leading-relaxed whitespace-pre-line font-sans">
                   {note.common_mistakes}
                 </p>
               </div>
@@ -361,13 +377,13 @@ const ConceptLearnPage = () => {
 
           {/* 7. Important Points */}
           {note?.important_points && (
-            <div className="p-4 sm:p-5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 flex items-start space-x-3">
-              <CheckCircle className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+            <div className="p-4 sm:p-5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-start space-x-3">
+              <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
               <div>
-                <h2 className="text-xs font-bold uppercase tracking-wider text-emerald-900 mb-1">
+                <h2 className="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-1 font-small">
                   Key Takeaways & Best Practices
                 </h2>
-                <p className="text-xs sm:text-sm text-emerald-950 leading-relaxed whitespace-pre-line">
+                <p className="text-xs sm:text-sm text-emerald-200 leading-relaxed whitespace-pre-line font-sans">
                   {note.important_points}
                 </p>
               </div>
@@ -376,26 +392,26 @@ const ConceptLearnPage = () => {
 
           {/* 8. Interview Corner */}
           {note?.interview_questions && (
-            <div className="p-5 rounded-2xl bg-purple-50/80 border border-purple-200/90 space-y-3">
-              <div className="flex items-center justify-between">
+            <div className="p-5 rounded-2xl bg-[#181924] border border-brand/30 space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div className="flex items-center space-x-2">
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-200 text-purple-900 uppercase tracking-wider">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-brand text-white uppercase tracking-wider font-small">
                     Interview Corner
                   </span>
-                  <h2 className="text-xs font-bold uppercase tracking-wider text-purple-900">
-                    Top Technical Interview Questions & Answers
+                  <h2 className="text-xs font-bold uppercase tracking-wider text-white font-heading">
+                    Top Technical Interview Questions
                   </h2>
                 </div>
                 <Link
                   to="/ai-tutor"
                   state={{ prompt: `Can you quiz me on ${activeConcept?.title || 'this topic'} interview questions?` }}
-                  className="text-[11px] font-semibold text-purple-700 hover:text-purple-900 flex items-center space-x-1"
+                  className="text-[11px] font-semibold text-brand hover:underline flex items-center space-x-1 font-small"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>Practice with AI Tutor →</span>
                 </Link>
               </div>
-              <div className="text-xs sm:text-sm text-purple-950 whitespace-pre-line leading-relaxed font-sans bg-white/70 p-4 rounded-xl border border-purple-100">
+              <div className="text-xs sm:text-sm text-gray-200 whitespace-pre-line leading-relaxed font-sans bg-[#090A0F] p-4 rounded-xl border border-white/5">
                 {note.interview_questions}
               </div>
             </div>
@@ -403,21 +419,21 @@ const ConceptLearnPage = () => {
 
           {/* 9. Online Document Viewer & Downloadable Resource */}
           {note?.resource_url && (
-            <div className="p-5 rounded-2xl bg-teal-50/80 border border-teal-200/90 space-y-3">
+            <div className="p-5 rounded-2xl bg-[#181924] border border-white/10 space-y-3">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <span className="text-xs font-bold text-teal-900 block">
+                  <span className="text-xs font-bold text-white block font-heading">
                     Original Study Document ({note.resource_url.split('.').pop().toUpperCase()})
                   </span>
-                  <span className="text-[11px] text-teal-700 break-all">{note.resource_url}</span>
+                  <span className="text-[11px] text-gray-400 break-all font-sans">{note.resource_url}</span>
                 </div>
 
-                <div className="flex items-center space-x-2 self-start sm:self-auto">
+                <div className="flex flex-wrap items-center gap-2">
                   <button
                     onClick={() => setShowDocViewer(!showDocViewer)}
-                    className="inline-flex items-center space-x-1.5 px-3.5 py-2 bg-white hover:bg-teal-100 text-teal-900 text-xs font-semibold rounded-xl border border-teal-300 shadow-xs transition-colors"
+                    className="inline-flex items-center space-x-1.5 px-3.5 py-2 bg-white/5 hover:bg-white/10 text-white text-xs font-semibold rounded-xl border border-white/10 shadow-xs transition-colors"
                   >
-                    <Eye className="w-3.5 h-3.5 text-teal-700" />
+                    <Eye className="w-3.5 h-3.5 text-brand" />
                     <span>{showDocViewer ? 'Hide Document Reader' : '📖 Read Online'}</span>
                   </button>
 
@@ -426,13 +442,13 @@ const ConceptLearnPage = () => {
                       href={note.resource_url}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center space-x-1.5 px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white text-xs font-semibold rounded-xl shadow-xs transition-colors"
+                      className="inline-flex items-center space-x-1.5 px-4 py-2 bg-brand hover:bg-brand-dark text-white text-xs font-semibold rounded-xl shadow-lg shadow-brand/20 transition-colors font-heading"
                     >
                       <Download className="w-3.5 h-3.5" />
                       <span>Download</span>
                     </a>
                   ) : (
-                    <div className="inline-flex items-center space-x-1.5 px-3 py-2 bg-gray-100 text-gray-600 text-xs font-medium rounded-xl border border-gray-300">
+                    <div className="inline-flex items-center space-x-1.5 px-3 py-2 bg-white/5 text-gray-400 text-xs font-medium rounded-xl border border-white/5">
                       <Lock className="w-3.5 h-3.5 text-gray-500" />
                       <span>Downloads Restricted</span>
                     </div>
@@ -442,8 +458,8 @@ const ConceptLearnPage = () => {
 
               {/* In-Browser Document Viewer Pane */}
               {showDocViewer && (
-                <div className="pt-3 border-t border-teal-200/80">
-                  <div className="bg-white rounded-2xl p-2 border border-teal-200 shadow-inner">
+                <div className="pt-3 border-t border-white/10">
+                  <div className="bg-[#090A0F] rounded-2xl p-2 border border-white/10">
                     <iframe
                       src={
                         note.resource_url.toLowerCase().endsWith('.pdf')
@@ -454,7 +470,7 @@ const ConceptLearnPage = () => {
                                 : window.location.origin + note.resource_url
                             )}&embedded=true`
                       }
-                      className="w-full h-[520px] rounded-xl border border-gray-200"
+                      className="w-full h-[360px] sm:h-[520px] rounded-xl border border-white/10"
                       title="Online Document Reader"
                     />
                   </div>
@@ -464,26 +480,25 @@ const ConceptLearnPage = () => {
           )}
 
           {/* Completion Bar & Navigation Footer */}
-          <div className="pt-6 border-t border-sage/40 flex flex-col sm:flex-row items-center justify-between gap-4">
-
+          <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
             <button
               onClick={handleMarkComplete}
               disabled={isCompleted || markingComplete}
-              className={`px-4 py-2.5 rounded-2xl text-xs font-semibold flex items-center space-x-2 transition-all ${
+              className={`w-full sm:w-auto px-5 py-2.5 rounded-2xl text-xs font-semibold flex items-center justify-center space-x-2 transition-all ${
                 isCompleted
-                  ? 'bg-green-100 text-green-800 border border-green-300'
-                  : 'bg-forest hover:bg-forest-dark text-ivory shadow-sm'
+                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                  : 'bg-brand hover:bg-brand-dark text-white shadow-lg shadow-brand/20 font-heading'
               }`}
             >
               <CheckCircle className="w-4 h-4" />
               <span>{isCompleted ? 'Topic Completed ✓' : markingComplete ? 'Saving...' : 'Mark as Completed'}</span>
             </button>
 
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-end">
               {prevConcept && (
                 <button
                   onClick={() => navigateToConcept(prevConcept)}
-                  className="px-4 py-2 border border-sage/60 rounded-xl text-xs font-semibold text-charcoal hover:bg-ivory transition-all"
+                  className="px-4 py-2 border border-white/10 rounded-xl text-xs font-semibold text-gray-300 hover:bg-white/5 hover:text-white transition-all font-sans"
                 >
                   ← {prevConcept.title}
                 </button>
@@ -491,7 +506,7 @@ const ConceptLearnPage = () => {
               {nextConcept && (
                 <button
                   onClick={() => navigateToConcept(nextConcept)}
-                  className="px-4 py-2 bg-sage hover:bg-sage-dark text-forest-dark rounded-xl text-xs font-semibold transition-all flex items-center space-x-1"
+                  className="px-4 py-2 bg-brand/20 hover:bg-brand/30 text-brand border border-brand/30 rounded-xl text-xs font-semibold transition-all flex items-center space-x-1 font-heading"
                 >
                   <span>Next: {nextConcept.title}</span>
                   <ArrowRight className="w-3.5 h-3.5" />

@@ -51,39 +51,39 @@ const TeacherRegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-ivory flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#090A0F] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 selection:bg-brand selection:text-white">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <div className="inline-flex items-center justify-center space-x-3 mb-3">
-          <div className="w-12 h-12 bg-forest-dark rounded-2xl flex items-center justify-center text-ivory shadow-md">
-            <ShieldCheck className="w-6 h-6 text-sage" />
+          <div className="w-12 h-12 bg-gradient-to-br from-brand to-brand-dark rounded-2xl flex items-center justify-center text-white shadow-lg shadow-brand/20 border border-brand/30">
+            <ShieldCheck className="w-6 h-6" />
           </div>
-          <span className="text-3xl font-extrabold tracking-tight text-forest-dark font-serif">
-            TechNotes
+          <span className="text-3xl font-extrabold tracking-tight text-white font-heading">
+            Syntax<span className="text-brand">Hawk</span>
           </span>
         </div>
-        <h2 className="text-xl font-bold text-charcoal">Teacher & Educator Registration</h2>
-        <p className="text-xs text-muted mt-1">
+        <h2 className="text-xl font-bold text-white font-heading">Teacher & Educator Registration</h2>
+        <p className="text-xs text-gray-400 mt-1 font-sans">
           Create structured notes, author quizzes, and mentor students.
         </p>
       </div>
 
-      <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-lg px-4">
-        <div className="bg-white py-8 px-6 sm:px-10 rounded-3xl shadow-card border border-sage/40">
-          <div className="mb-4 p-3 bg-sage/20 border border-sage/60 rounded-xl text-xs text-forest">
+      <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-lg">
+        <div className="bg-[#111827] py-8 px-5 sm:px-10 rounded-3xl shadow-2xl border border-white/10 backdrop-blur-xl">
+          <div className="mb-4 p-3 bg-brand/10 border border-brand/20 rounded-xl text-xs text-brand font-small">
             <strong>Educator Access:</strong> Teacher accounts receive content publishing permissions to author technologies, modules, notes, and quiz assessments.
           </div>
 
           {error && (
-            <div className="mb-5 p-3.5 bg-red-50 border border-red-200 rounded-2xl flex items-start space-x-2 text-red-700 text-sm">
-              <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+            <div className="mb-5 p-3.5 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-start space-x-2 text-red-400 text-xs font-small font-medium">
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
               <span>{error}</span>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-charcoal uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1 font-small">
                   First Name
                 </label>
                 <input
@@ -93,11 +93,11 @@ const TeacherRegisterPage = () => {
                   value={formData.first_name}
                   onChange={handleChange}
                   placeholder="e.g. Sarah"
-                  className="w-full px-3.5 py-2.5 bg-lightgrey/50 border border-sage/60 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-forest"
+                  className="w-full px-3.5 py-2.5 bg-[#181924] border border-white/10 rounded-xl text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand font-sans"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-charcoal uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1 font-small">
                   Last Name
                 </label>
                 <input
@@ -107,17 +107,17 @@ const TeacherRegisterPage = () => {
                   value={formData.last_name}
                   onChange={handleChange}
                   placeholder="e.g. Jenkins"
-                  className="w-full px-3.5 py-2.5 bg-lightgrey/50 border border-sage/60 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-forest"
+                  className="w-full px-3.5 py-2.5 bg-[#181924] border border-white/10 rounded-xl text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand font-sans"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-charcoal uppercase tracking-wider mb-1">
+              <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1 font-small">
                 Username
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-500">
                   <User className="w-4 h-4" />
                 </div>
                 <input
@@ -127,17 +127,17 @@ const TeacherRegisterPage = () => {
                   value={formData.username}
                   onChange={handleChange}
                   placeholder="e.g. teacher_sarah"
-                  className="w-full pl-10 pr-4 py-2.5 bg-lightgrey/50 border border-sage/60 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-forest"
+                  className="w-full pl-10 pr-4 py-2.5 bg-[#181924] border border-white/10 rounded-xl text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand font-sans"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-charcoal uppercase tracking-wider mb-1">
+              <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1 font-small">
                 Institutional Email
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-500">
                   <Mail className="w-4 h-4" />
                 </div>
                 <input
@@ -146,15 +146,15 @@ const TeacherRegisterPage = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder="sarah@technotes.com"
-                  className="w-full pl-10 pr-4 py-2.5 bg-lightgrey/50 border border-sage/60 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-forest"
+                  placeholder="sarah@syntaxhawk.com"
+                  className="w-full pl-10 pr-4 py-2.5 bg-[#181924] border border-white/10 rounded-xl text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand font-sans"
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-charcoal uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1 font-small">
                   Password
                 </label>
                 <input
@@ -164,11 +164,11 @@ const TeacherRegisterPage = () => {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  className="w-full px-3.5 py-2.5 bg-lightgrey/50 border border-sage/60 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-forest"
+                  className="w-full px-3.5 py-2.5 bg-[#181924] border border-white/10 rounded-xl text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand font-sans"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-charcoal uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1 font-small">
                   Confirm Password
                 </label>
                 <input
@@ -178,13 +178,13 @@ const TeacherRegisterPage = () => {
                   value={formData.password2}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  className="w-full px-3.5 py-2.5 bg-lightgrey/50 border border-sage/60 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-forest"
+                  className="w-full px-3.5 py-2.5 bg-[#181924] border border-white/10 rounded-xl text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand font-sans"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-charcoal uppercase tracking-wider mb-1">
+              <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1 font-small">
                 Teaching Specialization / Bio
               </label>
               <textarea
@@ -193,14 +193,14 @@ const TeacherRegisterPage = () => {
                 value={formData.bio}
                 onChange={handleChange}
                 placeholder="Technologies you teach (e.g. Python, React, Database Architecture)"
-                className="w-full px-3.5 py-2.5 bg-lightgrey/50 border border-sage/60 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-forest resize-none"
+                className="w-full px-3.5 py-2.5 bg-[#181924] border border-white/10 rounded-xl text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand resize-none font-sans"
               ></textarea>
             </div>
 
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-3 py-3 px-4 bg-forest-dark hover:bg-forest text-ivory font-semibold rounded-xl text-sm shadow-md transition-all flex items-center justify-center space-x-2 disabled:opacity-70"
+              className="w-full mt-3 py-3 px-4 bg-brand hover:bg-brand-dark text-white font-semibold rounded-xl text-sm shadow-lg shadow-brand/20 transition-all flex items-center justify-center space-x-2 disabled:opacity-70 font-heading"
             >
               {isLoading ? (
                 <span>Registering Educator...</span>
@@ -213,10 +213,10 @@ const TeacherRegisterPage = () => {
             </button>
           </form>
 
-          <div className="mt-6 pt-6 border-t border-sage/30 text-center">
-            <p className="text-xs text-muted">
+          <div className="mt-6 pt-6 border-t border-white/5 text-center">
+            <p className="text-xs text-gray-400 font-small">
               Already registered?{' '}
-              <Link to="/login" className="text-forest font-semibold hover:underline">
+              <Link to="/login" className="text-brand font-semibold hover:underline">
                 Sign in here
               </Link>
             </p>

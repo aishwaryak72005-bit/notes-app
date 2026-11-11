@@ -93,129 +93,128 @@ const StudentDashboard = () => {
   return (
     <div className="space-y-8 animate-fadeIn">
       {/* 1. Welcome Section matching Reference Mockup */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-charcoal flex items-center gap-2">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-black font-heading flex items-center gap-2">
             Welcome Back, {user?.first_name || 'Learner'}! <span className="inline-block animate-wave">👋</span>
           </h1>
-          <p className="text-sm text-muted mt-1">
-            Continue your learning journey and strengthen your technical skills.
+          <p className="text-xs sm:text-sm text-slate-500 font-roboto mt-1">
+            Continue your learning journey and strengthen your technical skills on SyntaxHawk.
           </p>
         </div>
 
         <div className="flex items-center space-x-3">
           <Link
             to="/ai-tutor"
-            className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-2xl bg-forest text-ivory text-xs font-semibold shadow-md hover:bg-forest-dark transition-all"
+            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-4 py-2.5 rounded-2xl bg-[#0B0F17] hover:bg-black text-white text-xs font-semibold shadow-md border border-[#27272A] hover:border-[#FA812F] transition-all group"
           >
-            <Sparkles className="w-4 h-4 text-sage" />
-            <span>Ask AI Learning Assistant</span>
+            <Sparkles className="w-4 h-4 text-[#FA812F] group-hover:rotate-12 transition-transform" />
+            <span>Ask SyntaxHawk AI Tutor</span>
           </Link>
         </div>
       </div>
 
       {/* Trainer Broadcast Announcement / Daily Tip */}
       {announcements.length > 0 && (
-        <div className="bg-gradient-to-r from-amber-500/15 via-amber-500/10 to-transparent p-5 rounded-3xl border border-amber-300 shadow-xs flex items-start space-x-3.5">
-          <div className="w-10 h-10 rounded-2xl bg-amber-500 text-white flex items-center justify-center flex-shrink-0 shadow-sm mt-0.5">
-            <Megaphone className="w-5 h-5" />
+        <div className="bg-gradient-to-r from-[#FA812F]/15 via-[#FA812F]/10 to-transparent p-4 sm:p-5 rounded-3xl border border-[#FA812F]/40 shadow-xs flex items-start space-x-3.5">
+          <div className="w-10 h-10 rounded-2xl bg-[#FA812F] text-black flex items-center justify-center flex-shrink-0 shadow-sm mt-0.5">
+            <Megaphone className="w-5 h-5 text-black" />
           </div>
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <div className="flex items-center space-x-2">
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-200 text-amber-900 uppercase tracking-wide">
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#FA812F]/20 text-[#C85710] uppercase tracking-wide font-roboto">
                 📢 Trainer Broadcast
               </span>
-              <span className="text-[11px] text-muted">
+              <span className="text-[11px] text-slate-500 font-roboto">
                 {new Date(announcements[0].created_at).toLocaleDateString()}
               </span>
             </div>
-            <h3 className="text-sm sm:text-base font-bold text-forest-dark mt-1">
+            <h3 className="text-sm sm:text-base font-bold text-black font-heading mt-1">
               {announcements[0].title}
             </h3>
-            <p className="text-xs sm:text-sm text-charcoal/80 mt-0.5 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-700 mt-0.5 leading-relaxed font-body">
               {announcements[0].message}
             </p>
           </div>
         </div>
       )}
 
-
       {/* 2. Top Statistics Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
         {/* Technologies Card */}
-        <div className="bg-white rounded-3xl p-5 shadow-card border border-sage/40 flex items-center space-x-4 hover:shadow-card-hover transition-all">
-          <div className="w-12 h-12 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center flex-shrink-0">
-            <Layers className="w-6 h-6" />
+        <div className="bg-white rounded-3xl p-4 sm:p-5 shadow-card border border-slate-200 flex items-center space-x-3.5 sm:space-x-4 hover:shadow-card-hover hover:border-[#FA812F]/50 transition-all">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-amber-50 text-[#FA812F] flex items-center justify-center flex-shrink-0">
+            <Layers className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
           <div>
-            <div className="text-2xl sm:text-3xl font-extrabold text-charcoal">
+            <div className="text-xl sm:text-3xl font-extrabold text-black font-heading">
               {stats.technologies_available}
             </div>
-            <div className="text-xs font-medium text-muted">Technologies</div>
+            <div className="text-[11px] sm:text-xs font-medium text-slate-500 font-roboto">Technologies</div>
           </div>
         </div>
 
         {/* Topics Completed Card */}
-        <div className="bg-white rounded-3xl p-5 shadow-card border border-sage/40 flex items-center space-x-4 hover:shadow-card-hover transition-all">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0">
-            <CheckCircle2 className="w-6 h-6" />
+        <div className="bg-white rounded-3xl p-4 sm:p-5 shadow-card border border-slate-200 flex items-center space-x-3.5 sm:space-x-4 hover:shadow-card-hover hover:border-[#FA812F]/50 transition-all">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-blue-50 text-[#2563EB] flex items-center justify-center flex-shrink-0">
+            <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
           <div>
-            <div className="text-2xl sm:text-3xl font-extrabold text-charcoal">
+            <div className="text-xl sm:text-3xl font-extrabold text-black font-heading">
               {stats.topics_completed}
             </div>
-            <div className="text-xs font-medium text-muted">Topics Completed</div>
+            <div className="text-[11px] sm:text-xs font-medium text-slate-500 font-roboto">Topics Completed</div>
           </div>
         </div>
 
         {/* Quizzes Taken Card */}
-        <div className="bg-white rounded-3xl p-5 shadow-card border border-sage/40 flex items-center space-x-4 hover:shadow-card-hover transition-all">
-          <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center flex-shrink-0">
-            <Trophy className="w-6 h-6" />
+        <div className="bg-white rounded-3xl p-4 sm:p-5 shadow-card border border-slate-200 flex items-center space-x-3.5 sm:space-x-4 hover:shadow-card-hover hover:border-[#FA812F]/50 transition-all">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-amber-100 text-[#FA812F] flex items-center justify-center flex-shrink-0">
+            <Trophy className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
           <div>
-            <div className="text-2xl sm:text-3xl font-extrabold text-charcoal">
+            <div className="text-xl sm:text-3xl font-extrabold text-black font-heading">
               {stats.quizzes_attempted}
             </div>
-            <div className="text-xs font-medium text-muted">Quizzes Taken</div>
+            <div className="text-[11px] sm:text-xs font-medium text-slate-500 font-roboto">Quizzes Taken</div>
           </div>
         </div>
 
         {/* Overall Score Card */}
-        <div className="bg-white rounded-3xl p-5 shadow-card border border-sage/40 flex items-center space-x-4 hover:shadow-card-hover transition-all">
-          <div className="w-12 h-12 rounded-2xl bg-teal-100 text-teal-700 flex items-center justify-center flex-shrink-0">
-            <BarChart3 className="w-6 h-6" />
+        <div className="bg-white rounded-3xl p-4 sm:p-5 shadow-card border border-slate-200 flex items-center space-x-3.5 sm:space-x-4 hover:shadow-card-hover hover:border-[#FA812F]/50 transition-all">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-blue-100 text-[#2563EB] flex items-center justify-center flex-shrink-0">
+            <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
           <div>
-            <div className="text-2xl sm:text-3xl font-extrabold text-charcoal">
+            <div className="text-xl sm:text-3xl font-extrabold text-black font-heading">
               {stats.overall_score}%
             </div>
-            <div className="text-xs font-medium text-muted">Overall Score</div>
+            <div className="text-[11px] sm:text-xs font-medium text-slate-500 font-roboto">Overall Score</div>
           </div>
         </div>
       </div>
 
       {/* 3. Explore Technologies Section */}
-      <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-card border border-sage/40">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 gap-4 border-b border-sage/30">
+      <div className="bg-white rounded-3xl p-5 sm:p-8 shadow-card border border-slate-200">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-5 gap-4 border-b border-slate-100">
           <div>
-            <h2 className="text-lg font-bold text-charcoal">Explore Technologies</h2>
-            <p className="text-xs text-muted mt-0.5">
+            <h2 className="text-lg font-bold text-black font-heading">Explore Technologies</h2>
+            <p className="text-xs text-slate-500 font-roboto mt-0.5">
               Structured concept notes, code examples and interactive practice quizzes.
             </p>
           </div>
 
-          <div className="flex items-center space-x-3">
-            {/* Category Filter Pills */}
-            <div className="hidden md:flex items-center space-x-1.5 p-1 bg-ivory rounded-2xl border border-sage/40">
+          <div className="flex items-center space-x-3 overflow-x-auto max-w-full pb-1 sm:pb-0">
+            {/* Category Filter Pills - Fully responsive horizontal scroller */}
+            <div className="flex items-center space-x-1.5 p-1 bg-slate-100 rounded-2xl border border-slate-200 flex-shrink-0">
               {categories.slice(0, 5).map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all whitespace-nowrap ${
                     selectedCategory === cat
-                      ? 'bg-forest text-ivory shadow-xs font-semibold'
-                      : 'text-muted hover:text-charcoal hover:bg-white/60'
+                      ? 'bg-[#0B0F17] text-[#FA812F] shadow-xs font-semibold'
+                      : 'text-slate-600 hover:text-black hover:bg-white/60'
                   }`}
                 >
                   {cat}
@@ -225,7 +224,7 @@ const StudentDashboard = () => {
 
             <Link
               to="/technologies"
-              className="text-xs font-semibold text-forest hover:text-forest-dark flex items-center space-x-1 group"
+              className="text-xs font-semibold text-[#FA812F] hover:text-[#C85710] flex items-center space-x-1 group flex-shrink-0"
             >
               <span>View All</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
@@ -271,38 +270,38 @@ const StudentDashboard = () => {
       {/* 4. Bottom Row: Continue Learning & Your Progress Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Continue Learning Widget (2 cols) */}
-        <div className="lg:col-span-2 bg-white rounded-3xl p-6 sm:p-7 shadow-card border border-sage/40 flex flex-col justify-between">
+        <div className="lg:col-span-2 bg-white rounded-3xl p-5 sm:p-7 shadow-card border border-slate-200 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-base font-bold text-charcoal">Continue Learning</h2>
-              <span className="px-3 py-1 bg-amber-50 text-amber-800 text-[11px] font-semibold rounded-full border border-amber-200">
+              <h2 className="text-base font-bold text-black font-heading">Continue Learning</h2>
+              <span className="px-3 py-1 bg-amber-50 text-[#C85710] text-[11px] font-bold rounded-full border border-amber-200 font-roboto">
                 In Progress
               </span>
             </div>
 
-            <div className="p-4 sm:p-5 rounded-2xl bg-ivory/70 border border-sage/50 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center text-blue-600 flex-shrink-0 shadow-xs">
+            <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center space-x-4 w-full sm:w-auto">
+                <div className="w-12 h-12 rounded-2xl bg-amber-100 flex items-center justify-center text-[#FA812F] flex-shrink-0 shadow-xs">
                   <Terminal className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-charcoal">
+                  <h3 className="text-sm font-bold text-black font-heading">
                     {continueLearning.module_title}
                   </h3>
-                  <p className="text-xs text-muted mt-0.5">
-                    Next Concept: <strong className="text-forest">{continueLearning.concept_title}</strong>
+                  <p className="text-xs text-slate-500 font-roboto mt-0.5">
+                    Next Concept: <strong className="text-[#FA812F]">{continueLearning.concept_title}</strong>
                   </p>
                 </div>
               </div>
 
               <div className="flex items-center space-x-4 w-full sm:w-auto justify-between sm:justify-end">
                 <div className="text-right sm:block hidden">
-                  <span className="text-xs font-bold text-forest">
+                  <span className="text-xs font-bold text-[#FA812F] font-heading">
                     {continueLearning.completion_percentage}%
                   </span>
-                  <div className="w-24 h-2 bg-sage/40 rounded-full mt-1 overflow-hidden">
+                  <div className="w-24 h-2 bg-slate-200 rounded-full mt-1 overflow-hidden">
                     <div
-                      className="h-full bg-forest rounded-full"
+                      className="h-full bg-[#FA812F] rounded-full"
                       style={{ width: `${continueLearning.completion_percentage}%` }}
                     ></div>
                   </div>
@@ -310,7 +309,7 @@ const StudentDashboard = () => {
 
                 <Link
                   to={`/learn/python/python-basics/variables`}
-                  className="w-10 h-10 rounded-2xl bg-forest hover:bg-forest-dark text-ivory flex items-center justify-center shadow-md transition-all group"
+                  className="w-10 h-10 rounded-2xl bg-[#0B0F17] hover:bg-black text-[#FA812F] border border-[#27272A] hover:border-[#FA812F] flex items-center justify-center shadow-md transition-all group"
                   title="Resume Study Session"
                 >
                   <ChevronRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
@@ -319,37 +318,37 @@ const StudentDashboard = () => {
             </div>
           </div>
 
-          <div className="mt-4 flex items-center justify-between text-xs text-muted pt-3 border-t border-sage/30">
+          <div className="mt-4 flex items-center justify-between text-xs text-slate-500 pt-3 border-t border-slate-100 font-roboto">
             <span>Last reviewed: 2 hours ago</span>
-            <Link to="/my-learning" className="text-forest font-semibold hover:underline">
+            <Link to="/my-learning" className="text-[#FA812F] font-bold hover:underline">
               View All Enrolled Courses →
             </Link>
           </div>
         </div>
 
         {/* Your Progress Widget (1 col) */}
-        <div className="bg-white rounded-3xl p-6 sm:p-7 shadow-card border border-sage/40 flex flex-col justify-between">
+        <div className="bg-white rounded-3xl p-5 sm:p-7 shadow-card border border-slate-200 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-base font-bold text-charcoal">Your Progress</h2>
-              <Link to="/progress" className="text-xs text-forest font-semibold hover:underline">
+              <h2 className="text-base font-bold text-black font-heading">Your Progress</h2>
+              <Link to="/progress" className="text-xs text-[#FA812F] font-bold hover:underline font-roboto">
                 Details →
               </Link>
             </div>
 
-            <div className="flex items-center space-x-6 py-2">
-              {/* Circular Gauge */}
+            <div className="flex items-center space-x-5 py-2">
+              {/* Circular Gauge in Graph Blue & Amber */}
               <div className="relative w-24 h-24 flex items-center justify-center flex-shrink-0">
                 <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
                   <path
-                    className="text-sage/40"
+                    className="text-slate-200"
                     strokeWidth="3.5"
                     stroke="currentColor"
                     fill="none"
                     d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                   />
                   <path
-                    className="text-forest transition-all duration-1000 ease-out"
+                    className="text-[#2563EB] transition-all duration-1000 ease-out"
                     strokeDasharray="78, 100"
                     strokeWidth="3.5"
                     strokeLinecap="round"
@@ -359,21 +358,21 @@ const StudentDashboard = () => {
                   />
                 </svg>
                 <div className="absolute text-center">
-                  <span className="text-xl font-extrabold text-charcoal">78%</span>
+                  <span className="text-xl font-extrabold text-black font-heading">78%</span>
                 </div>
               </div>
 
               {/* Progress Legend matching Reference Mockup */}
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 <div className="flex items-center space-x-2.5">
-                  <span className="w-3 h-3 rounded-full bg-forest"></span>
-                  <span className="text-xs font-medium text-charcoal">
+                  <span className="w-3 h-3 rounded-full bg-[#2563EB]"></span>
+                  <span className="text-xs font-medium text-black font-body">
                     Completed Topics ({stats.topics_completed})
                   </span>
                 </div>
                 <div className="flex items-center space-x-2.5">
-                  <span className="w-3 h-3 rounded-full bg-sage"></span>
-                  <span className="text-xs font-medium text-muted">
+                  <span className="w-3 h-3 rounded-full bg-[#FA812F]"></span>
+                  <span className="text-xs font-medium text-slate-500 font-roboto">
                     Pending Topics (10)
                   </span>
                 </div>
@@ -381,10 +380,10 @@ const StudentDashboard = () => {
             </div>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-sage/30">
+          <div className="mt-4 pt-3 border-t border-slate-100">
             <Link
               to="/progress"
-              className="w-full py-2 bg-ivory hover:bg-sage/40 text-forest text-xs font-semibold rounded-xl text-center block transition-all border border-sage/50"
+              className="w-full py-2.5 bg-slate-50 hover:bg-amber-50 text-black hover:text-[#FA812F] text-xs font-bold rounded-2xl text-center block transition-all border border-slate-200 font-body"
             >
               Analyze Learning Curve & Weak Spots
             </Link>

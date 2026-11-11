@@ -3,7 +3,7 @@ import google.generativeai as genai
 from django.conf import settings
 
 def get_system_instruction(level='beginner', concept_context=''):
-    base_prompt = f"""You are the TechNotes AI Personalized Learning Assistant — an expert technical tutor designed to help students master programming, computer science, and IT technologies.
+    base_prompt = f"""You are the SyntaxHawk AI Personalized Learning Assistant — an expert technical tutor designed to help students master programming, computer science, and IT technologies.
 
 Current Learning Context: {concept_context or 'General Programming & IT'}
 Target Student Understanding Level: {level.upper()}

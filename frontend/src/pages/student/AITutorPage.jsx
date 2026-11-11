@@ -170,209 +170,251 @@ const AITutorPage = () => {
     { label: "📝 Generate a practice question", text: "Please generate a practice challenge question for this topic with a hint." },
   ];
 
+  const [mobileTab, setMobileTab] = useState('chat'); // 'chat' | 'sessions'
+
   if (loading) {
-    return <Loader message="Connecting to TechNotes Personalized AI Tutor..." />;
+    return <Loader message="Connecting to SyntaxHawk AI Learning Assistant..." />;
   }
 
   return (
-    <div className="h-[calc(100vh-8.5rem)] flex flex-col md:flex-row gap-6 animate-fadeIn max-w-7xl mx-auto">
-      {/* Left Column: Conversations Sidebar */}
-      <div className="w-full md:w-80 bg-white rounded-3xl p-5 shadow-card border border-sage/40 flex flex-col justify-between overflow-hidden">
-        <div className="space-y-4 flex-1 flex flex-col min-h-0">
-          <div className="flex items-center justify-between pb-3 border-b border-sage/30">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-xl bg-forest text-ivory flex items-center justify-center shadow-xs">
-                <Sparkles className="w-4 h-4 text-sage" />
-              </div>
-              <span className="text-sm font-bold text-charcoal">AI Tutoring Sessions</span>
-            </div>
-            <button
-              onClick={handleNewSession}
-              title="Start New Session"
-              className="p-1.5 rounded-xl bg-ivory border border-sage/60 hover:bg-forest hover:text-ivory text-forest transition-all"
-            >
-              <Plus className="w-4 h-4" />
-            </button>
-          </div>
+    <div className="space-y-4 animate-fadeIn max-w-7xl mx-auto">
+      {/* Mobile Tab Switcher */}
+      <div className="flex md:hidden items-center p-1 bg-slate-100 rounded-2xl border border-slate-200 w-full max-w-xs mx-auto">
+        <button
+          onClick={() => setMobileTab('chat')}
+          className={`flex-1 py-1.5 rounded-xl text-xs font-bold transition-all ${
+            mobileTab === 'chat'
+              ? 'bg-[#0B0F17] text-[#FA812F] shadow-xs'
+              : 'text-slate-600 hover:text-black'
+          }`}
+        >
+          Active Chat
+        </button>
+        <button
+          onClick={() => setMobileTab('sessions')}
+          className={`flex-1 py-1.5 rounded-xl text-xs font-bold transition-all ${
+            mobileTab === 'sessions'
+              ? 'bg-[#0B0F17] text-[#FA812F] shadow-xs'
+              : 'text-slate-600 hover:text-black'
+          }`}
+        >
+          Sessions ({conversations.length})
+        </button>
+      </div>
 
-          {/* Conversations History List */}
-          <div className="space-y-1.5 overflow-y-auto flex-1 pr-1">
-            {conversations.map((c) => {
-              const isActive = activeConv?.id === c.id;
-              return (
-                <div
-                  key={c.id}
-                  onClick={() => selectConversation(c.id)}
-                  className={`p-3 rounded-2xl cursor-pointer text-xs transition-all flex items-center justify-between group ${
-                    isActive
-                      ? 'bg-sage/60 text-forest-dark font-bold border border-sage shadow-xs'
-                      : 'hover:bg-ivory text-charcoal border border-transparent'
-                  }`}
-                >
-                  <div className="flex items-center space-x-2.5 truncate">
-                    <MessageSquare className="w-4 h-4 text-forest flex-shrink-0" />
-                    <div className="truncate">
-                      <div className="truncate font-semibold">{c.title}</div>
-                      <div className="text-[10px] text-muted capitalize">
-                        Level: {c.explanation_level} • {c.updated_at}
+      <div className="h-[calc(100vh-12rem)] md:h-[calc(100vh-8.5rem)] flex flex-col md:flex-row gap-5">
+        {/* Left Column: Conversations Sidebar (Collapsible on mobile) */}
+        <div
+          className={`w-full md:w-80 bg-white rounded-3xl p-5 shadow-card border border-slate-200 flex flex-col justify-between overflow-hidden ${
+            mobileTab === 'sessions' ? 'flex' : 'hidden md:flex'
+          }`}
+        >
+          <div className="space-y-4 flex-1 flex flex-col min-h-0">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 rounded-xl bg-[#0B0F17] text-[#FA812F] flex items-center justify-center shadow-xs">
+                  <Sparkles className="w-4 h-4 text-[#FA812F]" />
+                </div>
+                <span className="text-sm font-bold text-black font-heading">AI Tutoring Sessions</span>
+              </div>
+              <button
+                onClick={() => {
+                  handleNewSession();
+                  setMobileTab('chat');
+                }}
+                title="Start New Session"
+                className="p-1.5 rounded-xl bg-slate-100 border border-slate-200 hover:bg-[#FA812F] hover:text-black text-black transition-all"
+              >
+                <Plus className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Conversations History List */}
+            <div className="space-y-1.5 overflow-y-auto flex-1 pr-1">
+              {conversations.map((c) => {
+                const isActive = activeConv?.id === c.id;
+                return (
+                  <div
+                    key={c.id}
+                    onClick={() => {
+                      selectConversation(c.id);
+                      setMobileTab('chat');
+                    }}
+                    className={`p-3 rounded-2xl cursor-pointer text-xs transition-all flex items-center justify-between group ${
+                      isActive
+                        ? 'bg-[#FA812F]/15 text-black font-bold border border-[#FA812F] shadow-xs'
+                        : 'hover:bg-slate-50 text-slate-700 border border-transparent'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-2.5 truncate">
+                      <MessageSquare className="w-4 h-4 text-[#FA812F] flex-shrink-0" />
+                      <div className="truncate">
+                        <div className="truncate font-semibold">{c.title}</div>
+                        <div className="text-[10px] text-slate-400 capitalize font-roboto">
+                          Level: {c.explanation_level} • {c.updated_at}
+                        </div>
                       </div>
                     </div>
+                    <button
+                      onClick={(e) => handleDeleteSession(c.id, e)}
+                      className="opacity-0 group-hover:opacity-100 p-1 hover:text-red-600 transition-opacity"
+                      title="Delete session"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
                   </div>
-                  <button
-                    onClick={(e) => handleDeleteSession(c.id, e)}
-                    className="opacity-0 group-hover:opacity-100 p-1 hover:text-red-600 transition-opacity"
-                    title="Delete session"
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Adaptive Level Guidance Card */}
+          <div className="pt-4 border-t border-slate-100">
+            <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 text-[11px] text-slate-500 font-roboto space-y-1">
+              <span className="font-bold text-[#C85710] block">Adaptive Guidance:</span>
+              <span>Tell SyntaxHawk AI whenever you struggle — it will automatically break down code concepts!</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column: Active Chat Feed & Input */}
+        <div
+          className={`flex-1 bg-white rounded-3xl shadow-card border border-slate-200 flex flex-col justify-between overflow-hidden ${
+            mobileTab === 'chat' ? 'flex' : 'hidden md:flex'
+          }`}
+        >
+          {/* Chat Header: Concept Context & Adaptive Level Pills */}
+          <div className="p-3.5 sm:px-6 py-3 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/60">
+            <div>
+              <div className="flex items-center space-x-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <h2 className="text-sm font-bold text-black font-heading">{activeConv?.title || 'Interactive AI Tutor'}</h2>
+              </div>
+              {activeConv?.concept_title && (
+                <span className="text-[11px] text-slate-500 font-roboto block mt-0.5">
+                  Target Concept: <strong className="text-[#FA812F]">{activeConv.concept_title}</strong>
+                </span>
+              )}
+            </div>
+
+            {/* 3-Tier Adaptive Level Selector */}
+            <div className="flex items-center space-x-1.5 p-1 bg-white rounded-2xl border border-slate-200 self-start sm:self-auto">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider pl-2 pr-1 font-roboto">Level:</span>
+              {[
+                { id: 'beginner', label: 'Beginner' },
+                { id: 'intermediate', label: 'Intermediate' },
+                { id: 'advanced', label: 'Advanced' },
+              ].map((lvl) => (
+                <button
+                  key={lvl.id}
+                  type="button"
+                  onClick={() => handleLevelChange(lvl.id)}
+                  className={`px-2.5 py-1 rounded-xl text-xs font-semibold transition-all ${
+                    currentLevel === lvl.id
+                      ? 'bg-[#0B0F17] text-[#FA812F] shadow-xs'
+                      : 'text-slate-600 hover:text-black hover:bg-slate-100'
+                  }`}
+                >
+                  {lvl.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Messages Feed */}
+          <div className="flex-1 p-3.5 sm:p-6 overflow-y-auto space-y-4">
+            {messages.map((msg, index) => {
+              const isAI = msg.sender === 'ai';
+              return (
+                <div
+                  key={msg.id || index}
+                  className={`flex items-start space-x-3 ${isAI ? '' : 'flex-row-reverse space-x-reverse'}`}
+                >
+                  <div
+                    className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 text-xs font-bold shadow-xs ${
+                      isAI ? 'bg-[#0B0F17] text-[#FA812F]' : 'bg-[#FA812F] text-black'
+                    }`}
                   >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+                    {isAI ? <Bot className="w-4 h-4 text-[#FA812F]" /> : <User className="w-4 h-4 text-black" />}
+                  </div>
+
+                  <div
+                    className={`max-w-[88%] sm:max-w-[80%] rounded-3xl p-3.5 sm:p-5 text-xs sm:text-sm leading-relaxed ${
+                      isAI
+                        ? 'bg-slate-50 text-black border border-slate-200 shadow-xs'
+                        : 'bg-[#0B0F17] text-white font-medium border border-[#27272A] shadow-xs'
+                    }`}
+                  >
+                    <div className="whitespace-pre-wrap space-y-2 font-body">{msg.content}</div>
+                    <div
+                      className={`text-[10px] mt-2 font-roboto ${
+                        isAI ? 'text-slate-400 text-right' : 'text-slate-400 text-left'
+                      }`}
+                    >
+                      {msg.created_at}
+                    </div>
+                  </div>
                 </div>
               );
             })}
-          </div>
-        </div>
 
-        {/* Adaptive Level Guidance Card */}
-        <div className="pt-4 border-t border-sage/30">
-          <div className="p-3 bg-ivory/80 rounded-2xl border border-sage/40 text-[11px] text-muted space-y-1">
-            <span className="font-bold text-forest block">Adaptive Learning Enabled:</span>
-            <span>Tell the tutor whenever you struggle — it will automatically simplify and switch analogies!</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Right Column: Active Chat Feed & Input */}
-      <div className="flex-1 bg-white rounded-3xl shadow-card border border-sage/40 flex flex-col justify-between overflow-hidden">
-        {/* Chat Header: Concept Context & Adaptive Level Pills */}
-        <div className="p-4 sm:px-6 py-3.5 border-b border-sage/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-ivory/40">
-          <div>
-            <div className="flex items-center space-x-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <h2 className="text-sm font-bold text-charcoal">{activeConv?.title || 'Interactive AI Tutor'}</h2>
-            </div>
-            {activeConv?.concept_title && (
-              <span className="text-[11px] text-muted block mt-0.5">
-                Target Concept: <strong className="text-forest">{activeConv.concept_title}</strong>
-              </span>
+            {isSending && (
+              <div className="flex items-center space-x-3 animate-pulse">
+                <div className="w-8 h-8 rounded-xl bg-[#0B0F17] text-[#FA812F] flex items-center justify-center shadow-xs">
+                  <Bot className="w-4 h-4 text-[#FA812F]" />
+                </div>
+                <div className="bg-slate-50 rounded-2xl px-4 py-3 text-xs text-slate-600 border border-slate-200 flex items-center space-x-2 font-body">
+                  <Sparkles className="w-3.5 h-3.5 text-[#FA812F] animate-spin" />
+                  <span>SyntaxHawk AI is preparing an explanation...</span>
+                </div>
+              </div>
             )}
+
+            <div ref={messagesEndRef} />
           </div>
 
-          {/* 3-Tier Adaptive Level Selector */}
-          <div className="flex items-center space-x-1.5 p-1 bg-white rounded-2xl border border-sage/60 self-start sm:self-auto">
-            <span className="text-[10px] font-bold text-muted uppercase tracking-wider pl-2 pr-1">Level:</span>
-            {[
-              { id: 'beginner', label: 'Beginner' },
-              { id: 'intermediate', label: 'Intermediate' },
-              { id: 'advanced', label: 'Advanced' },
-            ].map((lvl) => (
+          {/* Quick Action Prompt Pills */}
+          <div className="px-3 sm:px-6 pt-2 pb-1 border-t border-slate-100 bg-slate-50/40 flex items-center space-x-2 overflow-x-auto">
+            {quickPrompts.map((qp, idx) => (
               <button
-                key={lvl.id}
+                key={idx}
                 type="button"
-                onClick={() => handleLevelChange(lvl.id)}
-                className={`px-2.5 py-1 rounded-xl text-xs font-semibold transition-all ${
-                  currentLevel === lvl.id
-                    ? 'bg-forest text-ivory shadow-xs'
-                    : 'text-muted hover:text-charcoal hover:bg-ivory'
-                }`}
+                disabled={isSending}
+                onClick={() => handleSend(qp.text)}
+                className="px-3 py-1.5 rounded-full bg-white border border-slate-200 hover:border-[#FA812F] text-slate-700 hover:text-black text-[11px] font-semibold whitespace-nowrap transition-all flex-shrink-0 disabled:opacity-50 font-roboto"
               >
-                {lvl.label}
+                {qp.label}
               </button>
             ))}
           </div>
-        </div>
 
-        {/* Messages Feed */}
-        <div className="flex-1 p-4 sm:p-6 overflow-y-auto space-y-4">
-          {messages.map((msg, index) => {
-            const isAI = msg.sender === 'ai';
-            return (
-              <div
-                key={msg.id || index}
-                className={`flex items-start space-x-3 ${isAI ? '' : 'flex-row-reverse space-x-reverse'}`}
+          {/* Input Bar */}
+          <div className="p-3 sm:p-5 bg-white border-t border-slate-100">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSend();
+              }}
+              className="flex items-center space-x-2 sm:space-x-3"
+            >
+              <input
+                type="text"
+                value={inputMessage}
+                disabled={isSending}
+                onChange={(e) => setInputMessage(e.target.value)}
+                placeholder="Ask SyntaxHawk AI a question or request code..."
+                className="flex-1 px-3.5 sm:px-4 py-2.5 sm:py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-sm text-black placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FA812F] focus:bg-white shadow-xs transition-all disabled:opacity-50"
+              />
+              <button
+                type="submit"
+                disabled={isSending || !inputMessage.trim()}
+                className="p-2.5 sm:p-3 bg-gradient-to-r from-[#FA812F] to-[#E06A1A] hover:brightness-105 text-black rounded-2xl shadow-md transition-all disabled:opacity-40 flex items-center justify-center flex-shrink-0"
+                title="Send to Tutor"
               >
-                <div
-                  className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 text-xs font-bold shadow-xs ${
-                    isAI ? 'bg-forest text-ivory' : 'bg-sage text-forest-dark'
-                  }`}
-                >
-                  {isAI ? <Bot className="w-4 h-4 text-sage" /> : <User className="w-4 h-4 text-forest" />}
-                </div>
-
-                <div
-                  className={`max-w-[85%] rounded-3xl p-4 sm:p-5 text-xs sm:text-sm leading-relaxed ${
-                    isAI
-                      ? 'bg-ivory/60 text-charcoal border border-sage/50 shadow-xs'
-                      : 'bg-forest text-ivory font-medium shadow-xs'
-                  }`}
-                >
-                  <div className="whitespace-pre-wrap space-y-2">{msg.content}</div>
-                  <div
-                    className={`text-[10px] mt-2 ${
-                      isAI ? 'text-muted text-right' : 'text-sage-light text-left'
-                    }`}
-                  >
-                    {msg.created_at}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-
-          {isSending && (
-            <div className="flex items-center space-x-3 animate-pulse">
-              <div className="w-8 h-8 rounded-xl bg-forest text-ivory flex items-center justify-center shadow-xs">
-                <Bot className="w-4 h-4 text-sage" />
-              </div>
-              <div className="bg-ivory/80 rounded-2xl px-4 py-3 text-xs text-muted border border-sage/50 flex items-center space-x-2">
-                <Sparkles className="w-3.5 h-3.5 text-forest animate-spin" />
-                <span>AI Tutor is crafting an adaptive explanation for you...</span>
-              </div>
-            </div>
-          )}
-
-          <div ref={messagesEndRef} />
-        </div>
-
-        {/* Quick Action Prompt Pills */}
-        <div className="px-4 sm:px-6 pt-2 pb-1 border-t border-sage/20 bg-ivory/20 flex items-center space-x-2 overflow-x-auto">
-          {quickPrompts.map((qp, idx) => (
-            <button
-              key={idx}
-              type="button"
-              disabled={isSending}
-              onClick={() => handleSend(qp.text)}
-              className="px-3 py-1.5 rounded-full bg-white border border-sage/60 hover:border-forest text-forest hover:bg-sage/20 text-[11px] font-semibold whitespace-nowrap transition-all flex-shrink-0 disabled:opacity-50"
-            >
-              {qp.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Input Bar */}
-        <div className="p-4 sm:p-6 bg-white border-t border-sage/30">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSend();
-            }}
-            className="flex items-center space-x-3"
-          >
-            <input
-              type="text"
-              value={inputMessage}
-              disabled={isSending}
-              onChange={(e) => setInputMessage(e.target.value)}
-              placeholder="Ask a question, request code clarification, or say 'I don't understand'..."
-              className="flex-1 px-4 py-3 bg-lightgrey/50 border border-sage/60 rounded-2xl text-xs sm:text-sm text-charcoal placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-forest focus:bg-white shadow-xs transition-all disabled:opacity-50"
-            />
-            <button
-              type="submit"
-              disabled={isSending || !inputMessage.trim()}
-              className="p-3 bg-forest hover:bg-forest-dark text-ivory rounded-2xl shadow-md transition-all disabled:opacity-50 flex items-center justify-center"
-              title="Send to Tutor"
-            >
-              <Send className="w-4 h-4 text-sage" />
-            </button>
-          </form>
+                <Send className="w-4 h-4 text-black" />
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>

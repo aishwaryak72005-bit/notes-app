@@ -54,13 +54,13 @@ const TeacherStudentsPage = () => {
   const activeCount = studentList.length - strugglingCount;
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto">
+    <div className="space-y-6 max-w-6xl mx-auto selection:bg-brand selection:text-white">
       {/* Header and Stats */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-forest-dark">Student Management Roster</h1>
-          <p className="text-xs text-muted mt-0.5">
-            Monitor registered learners, course completion percentages, and inactive student alerts.
+          <h1 className="text-2xl font-bold text-white font-heading">Student Management Roster</h1>
+          <p className="text-xs text-gray-400 mt-0.5 font-sans">
+            Monitor registered learners, course completion percentages, and student progress alerts.
           </p>
         </div>
 
@@ -70,50 +70,52 @@ const TeacherStudentsPage = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search students..."
-            className="w-full px-3.5 py-2 bg-white border border-sage/60 rounded-xl text-xs text-charcoal shadow-xs focus:outline-none focus:ring-2 focus:ring-forest"
+            className="w-full px-3.5 py-2 bg-[#181924] border border-white/10 rounded-xl text-xs text-white placeholder-gray-500 shadow-xs focus:outline-none focus:ring-2 focus:ring-brand font-sans"
           />
         </div>
       </div>
 
       {/* KPI Stats Row */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white p-5 rounded-2xl border border-sage/40 shadow-xs flex items-center space-x-4">
-          <div className="w-10 h-10 rounded-xl bg-forest/10 text-forest flex items-center justify-center font-bold">
+        <div className="bg-[#111827] p-5 rounded-2xl border border-white/10 shadow-lg flex items-center space-x-4">
+          <div className="w-10 h-10 rounded-xl bg-brand/10 text-brand flex items-center justify-center font-bold">
             <Users className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-[11px] font-bold text-muted uppercase tracking-wider block">Registered Students</span>
-            <span className="text-2xl font-bold text-charcoal">{students.length}</span>
+            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block font-small">Registered Students</span>
+            <span className="text-2xl font-bold text-white font-heading">{students.length}</span>
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-sage/40 shadow-xs flex items-center space-x-4">
-          <div className="w-10 h-10 rounded-xl bg-green-100 text-green-700 flex items-center justify-center font-bold">
+        <div className="bg-[#111827] p-5 rounded-2xl border border-white/10 shadow-lg flex items-center space-x-4">
+          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold">
             <UserCheck className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-[11px] font-bold text-muted uppercase tracking-wider block">Active & On Track</span>
-            <span className="text-2xl font-bold text-green-700">{activeCount}</span>
+            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block font-small">Active & On Track</span>
+            <span className="text-2xl font-bold text-emerald-400 font-heading">{activeCount}</span>
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-sage/40 shadow-xs flex items-center space-x-4">
-          <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold">
+        <div className="bg-[#111827] p-5 rounded-2xl border border-white/10 shadow-lg flex items-center space-x-4">
+          <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold">
             <AlertTriangle className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-[11px] font-bold text-muted uppercase tracking-wider block">Needs Support / Inactive</span>
-            <span className="text-2xl font-bold text-amber-700">{strugglingCount}</span>
+            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block font-small">Needs Support</span>
+            <span className="text-2xl font-bold text-amber-400 font-heading">{strugglingCount}</span>
           </div>
         </div>
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center space-x-2">
+      <div className="flex flex-wrap items-center gap-2">
         <button
           onClick={() => setStatusFilter('all')}
           className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
-            statusFilter === 'all' ? 'bg-forest text-ivory' : 'bg-white text-charcoal border border-sage/60 hover:bg-sage/20'
+            statusFilter === 'all'
+              ? 'bg-brand text-white shadow-lg shadow-brand/20'
+              : 'bg-[#181924] text-gray-300 border border-white/10 hover:bg-white/5'
           }`}
         >
           All Students ({students.length})
@@ -121,7 +123,9 @@ const TeacherStudentsPage = () => {
         <button
           onClick={() => setStatusFilter('active')}
           className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
-            statusFilter === 'active' ? 'bg-forest text-ivory' : 'bg-white text-charcoal border border-sage/60 hover:bg-sage/20'
+            statusFilter === 'active'
+              ? 'bg-brand text-white shadow-lg shadow-brand/20'
+              : 'bg-[#181924] text-gray-300 border border-white/10 hover:bg-white/5'
           }`}
         >
           Active Learners ({activeCount})
@@ -129,7 +133,9 @@ const TeacherStudentsPage = () => {
         <button
           onClick={() => setStatusFilter('struggling')}
           className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
-            statusFilter === 'struggling' ? 'bg-forest text-ivory' : 'bg-white text-charcoal border border-sage/60 hover:bg-sage/20'
+            statusFilter === 'struggling'
+              ? 'bg-brand text-white shadow-lg shadow-brand/20'
+              : 'bg-[#181924] text-gray-300 border border-white/10 hover:bg-white/5'
           }`}
         >
           Needs Attention ({strugglingCount})
@@ -137,10 +143,10 @@ const TeacherStudentsPage = () => {
       </div>
 
       {/* Table Card */}
-      <div className="bg-white rounded-3xl shadow-card border border-sage/40 overflow-hidden">
+      <div className="bg-[#111827] rounded-3xl shadow-2xl border border-white/10 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs sm:text-sm">
-            <thead className="bg-ivory/60 border-b border-sage/40 text-muted uppercase text-[11px] tracking-wider">
+            <thead className="bg-[#181924] border-b border-white/10 text-gray-400 uppercase text-[11px] tracking-wider font-small">
               <tr>
                 <th className="py-3 px-6 font-semibold">Student Name</th>
                 <th className="py-3 px-4 font-semibold">Username</th>
@@ -149,33 +155,33 @@ const TeacherStudentsPage = () => {
                 <th className="py-3 px-6 font-semibold text-right">Progress & Standing</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-sage/20">
+            <tbody className="divide-y divide-white/5 font-sans">
               {filtered.map((s) => {
                 const { progressPct, isStruggling } = getStudentStats(s);
                 return (
-                  <tr key={s.id} className="hover:bg-ivory/30 transition-colors">
-                    <td className="py-3 px-6 font-bold text-charcoal">
+                  <tr key={s.id} className="hover:bg-white/5 transition-colors">
+                    <td className="py-3 px-6 font-bold text-white">
                       <div className="flex items-center space-x-2.5">
-                        <div className="w-8 h-8 rounded-full bg-forest text-ivory flex items-center justify-center font-bold text-xs">
+                        <div className="w-8 h-8 rounded-full bg-brand text-white flex items-center justify-center font-bold text-xs font-heading">
                           {(s.first_name?.[0] || s.username?.[0] || 'S').toUpperCase()}
                         </div>
                         <span>{s.first_name ? `${s.first_name} ${s.last_name}` : s.username}</span>
                       </div>
                     </td>
-                    <td className="py-3 px-4 text-muted">@{s.username}</td>
-                    <td className="py-3 px-4 text-muted">{s.email}</td>
-                    <td className="py-3 px-4 text-xs text-muted">
+                    <td className="py-3 px-4 text-gray-400 font-mono text-xs">@{s.username}</td>
+                    <td className="py-3 px-4 text-gray-400">{s.email}</td>
+                    <td className="py-3 px-4 text-xs text-gray-400 font-small">
                       {s.created_at ? new Date(s.created_at).toLocaleDateString() : 'Active Member'}
                     </td>
                     <td className="py-3 px-6 text-right">
                       {isStruggling ? (
-                        <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
-                          <AlertTriangle className="w-3 h-3 text-amber-600" />
+                        <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-300 border border-amber-500/30 font-small">
+                          <AlertTriangle className="w-3 h-3 text-amber-400" />
                           <span>Needs Attention ({progressPct}%)</span>
                         </span>
                       ) : (
-                        <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-green-100 text-green-800 border border-green-300">
-                          <CheckCircle2 className="w-3 h-3 text-green-600" />
+                        <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 font-small">
+                          <CheckCircle2 className="w-3 h-3 text-emerald-400" />
                           <span>On Track ({progressPct}%)</span>
                         </span>
                       )}
