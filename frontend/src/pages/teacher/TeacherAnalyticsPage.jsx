@@ -41,7 +41,7 @@ const TeacherAnalyticsPage = () => {
     { name: 'Frontend', value: 4, color: '#3B82F6' },
     { name: 'Backend', value: 2, color: '#1D4ED8' },
     { name: 'Database', value: 3, color: '#60A5FA' },
-    { name: 'AI & ML', value: 4, color: '#FA812F' },
+    { name: 'AI & ML', value: 4, color: '#FF8C00' },
   ];
 
   const studentPerformance = [

@@ -36,7 +36,7 @@ const LoginPage = () => {
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         {/* Brand Logo */}
         <div className="inline-flex items-center justify-center space-x-3 mb-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-[#FA812F] to-[#F59E0B] rounded-2xl flex items-center justify-center text-black font-black text-2xl shadow-lg shadow-[#FA812F]/20 font-heading">
+          <div className="w-12 h-12 bg-gradient-to-br from-[#FFD400] via-[#FF8C00] to-[#FF5F00] rounded-2xl flex items-center justify-center text-black font-black text-2xl shadow-lg shadow-[#FF8C00]/30 font-heading">
             S
           </div>
           <span className="text-3xl font-extrabold tracking-tight text-black font-heading">
@@ -46,7 +46,7 @@ const LoginPage = () => {
         <p className="text-xs uppercase tracking-widest text-slate-500 font-semibold font-roboto">
           Next-Gen Technical Learning Platform
         </p>
-        <div className="mt-2 inline-flex items-center space-x-2 text-xs text-[#FA812F] bg-amber-50 px-3 py-1 rounded-full font-bold font-roboto border border-amber-200">
+        <div className="mt-2 inline-flex items-center space-x-2 text-xs text-[#FF8C00] bg-amber-50 px-3 py-1 rounded-full font-bold font-roboto border border-amber-200">
           <span>Learn</span>
           <span>•</span>
           <span>Understand</span>
@@ -86,7 +86,7 @@ const LoginPage = () => {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Enter your username"
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#FA812F] focus:bg-white transition-all text-black"
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#FF8C00] focus:bg-white transition-all text-black"
                 />
               </div>
             </div>
@@ -98,7 +98,7 @@ const LoginPage = () => {
                 </label>
                 <Link
                   to="/forgot-password"
-                  className="text-xs text-[#FA812F] hover:text-[#C85710] font-medium font-roboto"
+                  className="text-xs text-[#FF8C00] hover:text-[#FF5F00] font-medium font-roboto"
                 >
                   Forgot password?
                 </Link>
@@ -113,7 +113,7 @@ const LoginPage = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#FA812F] focus:bg-white transition-all text-black"
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#FF8C00] focus:bg-white transition-all text-black"
                 />
               </div>
             </div>
@@ -121,7 +121,7 @@ const LoginPage = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-2 py-3 px-4 bg-gradient-to-r from-[#FA812F] to-[#E06A1A] hover:brightness-105 text-black font-extrabold rounded-xl text-sm shadow-md transition-all flex items-center justify-center space-x-2 disabled:opacity-70 font-heading"
+              className="w-full mt-2 py-3 px-4 bg-gradient-to-r from-[#FFD400] via-[#FF8C00] to-[#FF5F00] hover:brightness-105 text-black font-extrabold rounded-xl text-sm shadow-md transition-all flex items-center justify-center space-x-2 disabled:opacity-70 font-heading"
             >
               {isLoading ? (
                 <span>Signing In...</span>
@@ -139,7 +139,7 @@ const LoginPage = () => {
               New to SyntaxHawk?
             </p>
             <div className="flex justify-center text-xs font-semibold font-body">
-              <Link to="/register/student" className="text-[#FA812F] hover:underline">
+              <Link to="/register/student" className="text-[#FF8C00] hover:underline">
                 Create a Student Account →
               </Link>
             </div>

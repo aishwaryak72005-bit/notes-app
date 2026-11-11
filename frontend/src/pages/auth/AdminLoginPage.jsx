@@ -47,15 +47,15 @@ const AdminLoginPage = () => {
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         {/* Administrator Shield Brand Logo */}
         <div className="inline-flex items-center justify-center space-x-3 mb-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-brand to-brand-dark rounded-2xl flex items-center justify-center text-white shadow-lg shadow-brand/20 border border-brand/30">
-            <ShieldCheck className="w-6 h-6" />
+          <div className="w-12 h-12 bg-gradient-to-br from-[#FFD400] via-[#FF8C00] to-[#FF5F00] rounded-2xl flex items-center justify-center text-black shadow-lg shadow-[#FF8C00]/25 border border-[#FFD400]/40">
+            <ShieldCheck className="w-6 h-6 stroke-[2.5]" />
           </div>
           <span className="text-3xl font-extrabold tracking-tight text-white font-heading">
-            Syntax<span className="text-brand">Hawk</span>
+            Syntax<span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFD400] to-[#FF8C00]">Hawk</span>
           </span>
         </div>
-        <div className="mt-1 inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-white/5 border border-brand/30 text-brand text-xs font-small font-semibold">
-          <Shield className="w-3.5 h-3.5" />
+        <div className="mt-1 inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-white/5 border border-[#FF8C00]/30 text-[#FFC300] text-xs font-roboto font-semibold">
+          <Shield className="w-3.5 h-3.5 text-[#FFD400]" />
           <span>Restricted Faculty & Admin Portal</span>
         </div>
       </div>
@@ -118,17 +118,17 @@ const AdminLoginPage = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-4 flex items-center justify-center space-x-2 py-3 px-4 rounded-xl text-sm font-bold text-white bg-brand hover:bg-brand-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand shadow-lg shadow-brand/20 transition-all disabled:opacity-50 font-heading"
+              className="w-full mt-4 flex items-center justify-center space-x-2 py-3 px-4 rounded-xl text-sm font-extrabold text-black bg-gradient-to-r from-[#FFD400] via-[#FF8C00] to-[#FF5F00] hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FF8C00] shadow-lg shadow-[#FF8C00]/25 transition-all disabled:opacity-50 font-heading cursor-pointer"
             >
               <span>{isLoading ? 'Verifying Faculty Access...' : 'Sign In to Admin Panel'}</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4 stroke-[2.5]" />
             </button>
           </form>
 
           <div className="mt-6 pt-4 border-t border-white/5 text-center">
-            <span className="text-[11px] text-gray-400 font-small">
+            <span className="text-[11px] text-gray-400 font-roboto">
               Student attempting to learn?{' '}
-              <a href="/login" className="text-brand font-bold hover:underline">
+              <a href="/login" className="text-[#FFC300] font-bold hover:underline">
                 Go to Student Portal
               </a>
             </span>

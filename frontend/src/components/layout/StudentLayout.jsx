@@ -69,14 +69,14 @@ const StudentLayout = () => {
           {/* SyntaxHawk Brand Header */}
           <div className="p-5 sm:p-6 flex items-center justify-between border-b border-[#1E202E]">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#FA812F] to-[#F59E0B] flex items-center justify-center text-black font-extrabold shadow-md shadow-[#FA812F]/20">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#FFD400] via-[#FF8C00] to-[#FF5F00] flex items-center justify-center text-black font-extrabold shadow-md shadow-[#FF8C00]/30">
                 <span className="text-lg font-black font-heading tracking-tight">S</span>
               </div>
               <div>
                 <span className="text-xl font-extrabold tracking-tight text-white font-heading">
                   SyntaxHawk
                 </span>
-                <span className="block text-[10px] uppercase tracking-wider text-[#FA812F] font-bold font-roboto">
+                <span className="block text-[10px] uppercase tracking-wider text-[#FFC300] font-bold font-roboto">
                   Learning Platform
                 </span>
               </div>
@@ -102,7 +102,7 @@ const StudentLayout = () => {
                   className={({ isActive }) =>
                     `flex items-center justify-between px-3.5 py-2.5 sm:py-3 rounded-2xl text-xs sm:text-sm font-medium transition-all ${
                       isActive
-                        ? 'bg-[#FA812F]/15 text-[#FA812F] font-semibold border-l-4 border-[#FA812F] shadow-xs'
+                        ? 'bg-[#FF8C00]/15 text-[#FFC300] font-semibold border-l-4 border-[#FF8C00] shadow-xs'
                         : 'text-slate-400 hover:bg-[#181924] hover:text-white'
                     }`
                   }
@@ -112,7 +112,7 @@ const StudentLayout = () => {
                     <span>{item.name}</span>
                   </div>
                   {item.badge && (
-                    <span className="px-2 py-0.5 text-[10px] font-bold bg-[#FA812F]/20 text-[#FA812F] rounded-full border border-[#FA812F]/30 font-roboto">
+                    <span className="px-2 py-0.5 text-[10px] font-bold bg-[#FF8C00]/20 text-[#FFC300] rounded-full border border-[#FF8C00]/30 font-roboto">
                       {item.badge}
                     </span>
                   )}
@@ -125,9 +125,9 @@ const StudentLayout = () => {
               <NavLink
                 to="/teacher/dashboard"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center space-x-3 px-3.5 py-2.5 sm:py-3 mt-4 rounded-2xl text-xs font-semibold text-amber-300 bg-[#FA812F]/10 border border-[#FA812F]/30 hover:bg-[#FA812F]/20 transition-all"
+                className="flex items-center space-x-3 px-3.5 py-2.5 sm:py-3 mt-4 rounded-2xl text-xs font-semibold text-[#FFD400] bg-[#FF8C00]/10 border border-[#FF8C00]/30 hover:bg-[#FF8C00]/20 transition-all"
               >
-                <Shield className="w-4 h-4 text-[#FA812F]" />
+                <Shield className="w-4 h-4 text-[#FF8C00]" />
                 <span>Trainer Studio →</span>
               </NavLink>
             )}
@@ -138,14 +138,14 @@ const StudentLayout = () => {
         <div className="p-4 border-t border-[#1E202E]">
           <div className="flex items-center justify-between p-2.5 rounded-2xl bg-[#181924] border border-[#27272A] mb-3">
             <div className="flex items-center space-x-2.5 overflow-hidden">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#FA812F] to-[#F59E0B] text-black font-extrabold text-xs flex items-center justify-center flex-shrink-0 font-heading">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#FFD400] via-[#FF8C00] to-[#FF5F00] text-black font-extrabold text-xs flex items-center justify-center flex-shrink-0 font-heading">
                 {(user?.first_name?.[0] || user?.username?.[0] || 'U').toUpperCase()}
               </div>
               <div className="truncate">
                 <p className="text-xs font-semibold text-white truncate font-body">
                   {user?.first_name ? `${user.first_name} ${user.last_name}` : user?.username}
                 </p>
-                <p className="text-[10px] text-[#FA812F] capitalize truncate font-roboto font-medium">{user?.role || 'Learner'}</p>
+                <p className="text-[10px] text-[#FFC300] capitalize truncate font-roboto font-medium">{user?.role || 'Learner'}</p>
               </div>
             </div>
           </div>
@@ -175,7 +175,7 @@ const StudentLayout = () => {
 
             {/* Mobile Brand Name */}
             <span className="lg:hidden font-extrabold text-base font-heading text-black tracking-tight flex items-center space-x-1.5 mr-1">
-              <span className="w-6 h-6 rounded-lg bg-[#FA812F] text-black flex items-center justify-center text-xs font-black">S</span>
+              <span className="w-6 h-6 rounded-lg bg-gradient-to-br from-[#FFD400] to-[#FF5F00] text-black flex items-center justify-center text-xs font-black">S</span>
               <span className="hidden xs:inline">SyntaxHawk</span>
             </span>
 
@@ -187,7 +187,7 @@ const StudentLayout = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search topics, modules, technologies..."
-                className="w-full pl-9 sm:pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-2xl text-xs sm:text-sm text-black placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FA812F] focus:border-transparent shadow-xs transition-all"
+                className="w-full pl-9 sm:pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-2xl text-xs sm:text-sm text-black placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FF8C00] focus:border-transparent shadow-xs transition-all"
               />
             </form>
           </div>
@@ -196,9 +196,9 @@ const StudentLayout = () => {
           <div className="flex items-center space-x-2 sm:space-x-3 ml-2 sm:ml-4">
             <NavLink
               to="/profile"
-              className="flex items-center space-x-2 p-1 sm:px-3 sm:py-1.5 rounded-2xl bg-white border border-slate-200 hover:border-[#FA812F] shadow-xs transition-all"
+              className="flex items-center space-x-2 p-1 sm:px-3 sm:py-1.5 rounded-2xl bg-white border border-slate-200 hover:border-[#FF8C00] shadow-xs transition-all"
             >
-              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#FA812F] to-[#F59E0B] text-black text-xs font-bold flex items-center justify-center font-heading">
+              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#FFD400] via-[#FF8C00] to-[#FF5F00] text-black text-xs font-bold flex items-center justify-center font-heading">
                 {(user?.first_name?.[0] || user?.username?.[0] || 'U').toUpperCase()}
               </div>
               <span className="hidden sm:inline text-xs font-semibold text-black font-body">

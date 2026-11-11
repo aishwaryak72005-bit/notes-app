@@ -120,7 +120,7 @@ const TeacherDashboard = () => {
             <h1 className="text-2xl sm:text-3xl font-extrabold text-black font-heading">
               Trainer Command Center
             </h1>
-            <span className="px-2.5 py-0.5 text-[11px] font-bold bg-[#FA812F]/15 text-[#C85710] rounded-full border border-[#FA812F]/30 font-roboto">
+            <span className="px-2.5 py-0.5 text-[11px] font-bold bg-[#FF8C00]/15 text-[#FF5F00] rounded-full border border-[#FF8C00]/30 font-roboto">
               Solo Studio
             </span>
           </div>
@@ -132,28 +132,28 @@ const TeacherDashboard = () => {
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => setZipModalOpen(true)}
-            className="px-3.5 sm:px-4 py-2 bg-gradient-to-r from-[#FA812F] to-[#E06A1A] hover:brightness-105 text-black text-xs font-bold rounded-2xl shadow-sm transition-all flex items-center space-x-1.5 font-heading"
+            className="px-3.5 sm:px-4 py-2 bg-gradient-to-r from-[#FFD400] via-[#FF8C00] to-[#FF5F00] hover:brightness-105 text-black text-xs font-bold rounded-2xl shadow-sm transition-all flex items-center space-x-1.5 font-heading"
           >
             <FileArchive className="w-4 h-4 text-black" />
             <span>📦 1-Click ZIP Upload</span>
           </button>
           <Link
             to="/teacher/notes"
-            className="px-3.5 sm:px-4 py-2 bg-[#0B0F17] hover:bg-black text-white text-xs font-semibold rounded-2xl shadow-sm border border-[#27272A] hover:border-[#FA812F] transition-all flex items-center space-x-1.5"
+            className="px-3.5 sm:px-4 py-2 bg-[#0B0F17] hover:bg-black text-white text-xs font-semibold rounded-2xl shadow-sm border border-[#27272A] hover:border-[#FF8C00] transition-all flex items-center space-x-1.5"
           >
-            <PlusCircle className="w-4 h-4 text-[#FA812F]" />
+            <PlusCircle className="w-4 h-4 text-[#FFD400]" />
             <span>Write New Note</span>
           </Link>
           <Link
             to="/teacher/quizzes"
-            className="px-3 sm:px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-black text-xs font-semibold rounded-2xl shadow-xs transition-all flex items-center space-x-1.5"
+            className="px-3.5 sm:px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-black text-xs font-semibold rounded-2xl shadow-xs transition-all flex items-center space-x-1.5"
           >
-            <Sparkles className="w-4 h-4 text-[#FA812F]" />
+            <Sparkles className="w-4 h-4 text-[#FF8C00]" />
             <span>AI Quiz Engine</span>
           </Link>
           <Link
             to="/teacher/students"
-            className="px-3 sm:px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-black text-xs font-semibold rounded-2xl shadow-xs transition-all flex items-center space-x-1.5"
+            className="px-3.5 sm:px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-black text-xs font-semibold rounded-2xl shadow-xs transition-all flex items-center space-x-1.5"
           >
             <Users className="w-4 h-4 text-[#2563EB]" />
             <span>Student Roster</span>
@@ -163,7 +163,7 @@ const TeacherDashboard = () => {
 
       {/* Overview Stat Cards - Responsive Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-        <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-xs hover:border-[#FA812F]/40 transition-all">
+        <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-xs hover:border-[#FF8C00]/40 transition-all">
           <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center mb-3">
             <Layers className="w-5 h-5" />
           </div>
@@ -171,7 +171,7 @@ const TeacherDashboard = () => {
           <div className="text-[11px] sm:text-xs text-slate-500 font-roboto mt-0.5">Technologies</div>
         </div>
 
-        <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-xs hover:border-[#FA812F]/40 transition-all">
+        <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-xs hover:border-[#FF8C00]/40 transition-all">
           <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#2563EB] flex items-center justify-center mb-3">
             <FolderTree className="w-5 h-5" />
           </div>
@@ -179,7 +179,7 @@ const TeacherDashboard = () => {
           <div className="text-[11px] sm:text-xs text-slate-500 font-roboto mt-0.5">Modules</div>
         </div>
 
-        <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-xs hover:border-[#FA812F]/40 transition-all">
+        <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-xs hover:border-[#FF8C00]/40 transition-all">
           <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-3">
             <FileCode className="w-5 h-5" />
           </div>
@@ -187,15 +187,15 @@ const TeacherDashboard = () => {
           <div className="text-[11px] sm:text-xs text-slate-500 font-roboto mt-0.5">Concepts</div>
         </div>
 
-        <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-xs hover:border-[#FA812F]/40 transition-all">
-          <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#FA812F] flex items-center justify-center mb-3">
+        <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-xs hover:border-[#FF8C00]/40 transition-all">
+          <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#FF8C00] flex items-center justify-center mb-3">
             <FileText className="w-5 h-5" />
           </div>
           <div className="text-xl sm:text-2xl font-extrabold text-black font-heading">{stats.total_notes}</div>
           <div className="text-[11px] sm:text-xs text-slate-500 font-roboto mt-0.5">Published Notes</div>
         </div>
 
-        <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-xs hover:border-[#FA812F]/40 transition-all">
+        <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-xs hover:border-[#FF8C00]/40 transition-all">
           <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#3B82F6] flex items-center justify-center mb-3">
             <HelpCircle className="w-5 h-5" />
           </div>
@@ -203,12 +203,11 @@ const TeacherDashboard = () => {
           <div className="text-[11px] sm:text-xs text-slate-500 font-roboto mt-0.5">Quizzes</div>
         </div>
 
-        <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-xs hover:border-[#FA812F]/40 transition-all">
+        <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-xs hover:border-[#FF8C00]/40 transition-all">
           <div className="w-10 h-10 rounded-xl bg-slate-100 text-black flex items-center justify-center mb-3">
             <Users className="w-5 h-5 text-black" />
           </div>
           <div className="text-xl sm:text-2xl font-extrabold text-black font-heading">{stats.total_students}</div>
-          <div className="text-[11px] sm:text-xs text-slate-500 font-roboto mt-0.5">Students</div>
         </div>
       </div>
 

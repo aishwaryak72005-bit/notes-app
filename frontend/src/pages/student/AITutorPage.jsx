@@ -184,7 +184,7 @@ const AITutorPage = () => {
           onClick={() => setMobileTab('chat')}
           className={`flex-1 py-1.5 rounded-xl text-xs font-bold transition-all ${
             mobileTab === 'chat'
-              ? 'bg-[#0B0F17] text-[#FA812F] shadow-xs'
+              ? 'bg-[#0B0F17] text-[#FFD400] shadow-xs'
               : 'text-slate-600 hover:text-black'
           }`}
         >
@@ -194,7 +194,7 @@ const AITutorPage = () => {
           onClick={() => setMobileTab('sessions')}
           className={`flex-1 py-1.5 rounded-xl text-xs font-bold transition-all ${
             mobileTab === 'sessions'
-              ? 'bg-[#0B0F17] text-[#FA812F] shadow-xs'
+              ? 'bg-[#0B0F17] text-[#FFD400] shadow-xs'
               : 'text-slate-600 hover:text-black'
           }`}
         >
@@ -212,8 +212,8 @@ const AITutorPage = () => {
           <div className="space-y-4 flex-1 flex flex-col min-h-0">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 rounded-xl bg-[#0B0F17] text-[#FA812F] flex items-center justify-center shadow-xs">
-                  <Sparkles className="w-4 h-4 text-[#FA812F]" />
+                <div className="w-8 h-8 rounded-xl bg-[#0B0F17] text-[#FFD400] flex items-center justify-center shadow-xs">
+                  <Sparkles className="w-4 h-4 text-[#FFD400]" />
                 </div>
                 <span className="text-sm font-bold text-black font-heading">AI Tutoring Sessions</span>
               </div>
@@ -223,7 +223,7 @@ const AITutorPage = () => {
                   setMobileTab('chat');
                 }}
                 title="Start New Session"
-                className="p-1.5 rounded-xl bg-slate-100 border border-slate-200 hover:bg-[#FA812F] hover:text-black text-black transition-all"
+                className="p-1.5 rounded-xl bg-slate-100 border border-slate-200 hover:bg-[#FF8C00] hover:text-black text-black transition-all"
               >
                 <Plus className="w-4 h-4" />
               </button>
@@ -242,12 +242,12 @@ const AITutorPage = () => {
                     }}
                     className={`p-3 rounded-2xl cursor-pointer text-xs transition-all flex items-center justify-between group ${
                       isActive
-                        ? 'bg-[#FA812F]/15 text-black font-bold border border-[#FA812F] shadow-xs'
+                        ? 'bg-[#FF8C00]/15 text-black font-bold border border-[#FF8C00] shadow-xs'
                         : 'hover:bg-slate-50 text-slate-700 border border-transparent'
                     }`}
                   >
                     <div className="flex items-center space-x-2.5 truncate">
-                      <MessageSquare className="w-4 h-4 text-[#FA812F] flex-shrink-0" />
+                      <MessageSquare className="w-4 h-4 text-[#FF8C00] flex-shrink-0" />
                       <div className="truncate">
                         <div className="truncate font-semibold">{c.title}</div>
                         <div className="text-[10px] text-slate-400 capitalize font-roboto">
@@ -292,7 +292,7 @@ const AITutorPage = () => {
               </div>
               {activeConv?.concept_title && (
                 <span className="text-[11px] text-slate-500 font-roboto block mt-0.5">
-                  Target Concept: <strong className="text-[#FA812F]">{activeConv.concept_title}</strong>
+                  Target Concept: <strong className="text-[#FF8C00]">{activeConv.concept_title}</strong>
                 </span>
               )}
             </div>
@@ -311,7 +311,7 @@ const AITutorPage = () => {
                   onClick={() => handleLevelChange(lvl.id)}
                   className={`px-2.5 py-1 rounded-xl text-xs font-semibold transition-all ${
                     currentLevel === lvl.id
-                      ? 'bg-[#0B0F17] text-[#FA812F] shadow-xs'
+                      ? 'bg-[#0B0F17] text-[#FFD400] shadow-xs'
                       : 'text-slate-600 hover:text-black hover:bg-slate-100'
                   }`}
                 >
@@ -332,10 +332,10 @@ const AITutorPage = () => {
                 >
                   <div
                     className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 text-xs font-bold shadow-xs ${
-                      isAI ? 'bg-[#0B0F17] text-[#FA812F]' : 'bg-[#FA812F] text-black'
+                      isAI ? 'bg-[#0B0F17] text-[#FFD400]' : 'bg-gradient-to-br from-[#FFD400] to-[#FF5F00] text-black'
                     }`}
                   >
-                    {isAI ? <Bot className="w-4 h-4 text-[#FA812F]" /> : <User className="w-4 h-4 text-black" />}
+                    {isAI ? <Bot className="w-4 h-4 text-[#FFD400]" /> : <User className="w-4 h-4 text-black" />}
                   </div>
 
                   <div
@@ -360,11 +360,11 @@ const AITutorPage = () => {
 
             {isSending && (
               <div className="flex items-center space-x-3 animate-pulse">
-                <div className="w-8 h-8 rounded-xl bg-[#0B0F17] text-[#FA812F] flex items-center justify-center shadow-xs">
-                  <Bot className="w-4 h-4 text-[#FA812F]" />
+                <div className="w-8 h-8 rounded-xl bg-[#0B0F17] text-[#FFD400] flex items-center justify-center shadow-xs">
+                  <Bot className="w-4 h-4 text-[#FFD400]" />
                 </div>
                 <div className="bg-slate-50 rounded-2xl px-4 py-3 text-xs text-slate-600 border border-slate-200 flex items-center space-x-2 font-body">
-                  <Sparkles className="w-3.5 h-3.5 text-[#FA812F] animate-spin" />
+                  <Sparkles className="w-3.5 h-3.5 text-[#FFD400] animate-spin" />
                   <span>SyntaxHawk AI is preparing an explanation...</span>
                 </div>
               </div>
@@ -381,7 +381,7 @@ const AITutorPage = () => {
                 type="button"
                 disabled={isSending}
                 onClick={() => handleSend(qp.text)}
-                className="px-3 py-1.5 rounded-full bg-white border border-slate-200 hover:border-[#FA812F] text-slate-700 hover:text-black text-[11px] font-semibold whitespace-nowrap transition-all flex-shrink-0 disabled:opacity-50 font-roboto"
+                className="px-3 py-1.5 rounded-full bg-white border border-slate-200 hover:border-[#FF8C00] text-slate-700 hover:text-black text-[11px] font-semibold whitespace-nowrap transition-all flex-shrink-0 disabled:opacity-50 font-roboto"
               >
                 {qp.label}
               </button>
@@ -403,12 +403,12 @@ const AITutorPage = () => {
                 disabled={isSending}
                 onChange={(e) => setInputMessage(e.target.value)}
                 placeholder="Ask SyntaxHawk AI a question or request code..."
-                className="flex-1 px-3.5 sm:px-4 py-2.5 sm:py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-sm text-black placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FA812F] focus:bg-white shadow-xs transition-all disabled:opacity-50"
+                className="flex-1 px-3.5 sm:px-4 py-2.5 sm:py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-sm text-black placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FF8C00] focus:bg-white shadow-xs transition-all disabled:opacity-50"
               />
               <button
                 type="submit"
                 disabled={isSending || !inputMessage.trim()}
-                className="p-2.5 sm:p-3 bg-gradient-to-r from-[#FA812F] to-[#E06A1A] hover:brightness-105 text-black rounded-2xl shadow-md transition-all disabled:opacity-40 flex items-center justify-center flex-shrink-0"
+                className="p-2.5 sm:p-3 bg-gradient-to-r from-[#FFD400] via-[#FF8C00] to-[#FF5F00] hover:brightness-105 text-black rounded-2xl shadow-md transition-all disabled:opacity-40 flex items-center justify-center flex-shrink-0"
                 title="Send to Tutor"
               >
                 <Send className="w-4 h-4 text-black" />

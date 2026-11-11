@@ -8,10 +8,14 @@ export default {
     extend: {
       colors: {
         brand: {
-          DEFAULT: '#FA812F',
-          hover: '#E06A1A',
-          light: '#FFF4EB',
-          dark: '#C85710',
+          DEFAULT: '#FF8C00',
+          gold: '#FFD400',
+          amber: '#FFC300',
+          orange: '#FF8C00',
+          flame: '#FF5F00',
+          hover: '#FF5F00',
+          light: '#FFF9E6',
+          dark: '#FF5F00',
         },
         dark: {
           black: '#090A0F',

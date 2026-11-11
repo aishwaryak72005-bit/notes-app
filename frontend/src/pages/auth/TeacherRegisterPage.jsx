@@ -54,11 +54,11 @@ const TeacherRegisterPage = () => {
     <div className="min-h-screen bg-[#090A0F] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 selection:bg-brand selection:text-white">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <div className="inline-flex items-center justify-center space-x-3 mb-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-brand to-brand-dark rounded-2xl flex items-center justify-center text-white shadow-lg shadow-brand/20 border border-brand/30">
-            <ShieldCheck className="w-6 h-6" />
+          <div className="w-12 h-12 bg-gradient-to-br from-[#FFD400] via-[#FF8C00] to-[#FF5F00] rounded-2xl flex items-center justify-center text-black shadow-lg shadow-[#FF8C00]/25 border border-[#FFD400]/40">
+            <ShieldCheck className="w-6 h-6 stroke-[2.5]" />
           </div>
           <span className="text-3xl font-extrabold tracking-tight text-white font-heading">
-            Syntax<span className="text-brand">Hawk</span>
+            Syntax<span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFD400] to-[#FF8C00]">Hawk</span>
           </span>
         </div>
         <h2 className="text-xl font-bold text-white font-heading">Teacher & Educator Registration</h2>
@@ -69,8 +69,8 @@ const TeacherRegisterPage = () => {
 
       <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-lg">
         <div className="bg-[#111827] py-8 px-5 sm:px-10 rounded-3xl shadow-2xl border border-white/10 backdrop-blur-xl">
-          <div className="mb-4 p-3 bg-brand/10 border border-brand/20 rounded-xl text-xs text-brand font-small">
-            <strong>Educator Access:</strong> Teacher accounts receive content publishing permissions to author technologies, modules, notes, and quiz assessments.
+          <div className="mb-4 p-3 bg-[#FF8C00]/10 border border-[#FF8C00]/30 rounded-xl text-xs text-[#FFC300] font-roboto">
+            <strong className="text-[#FFD400]">Educator Access:</strong> Teacher accounts receive content publishing permissions to author technologies, modules, notes, and quiz assessments.
           </div>
 
           {error && (
@@ -200,23 +200,23 @@ const TeacherRegisterPage = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-3 py-3 px-4 bg-brand hover:bg-brand-dark text-white font-semibold rounded-xl text-sm shadow-lg shadow-brand/20 transition-all flex items-center justify-center space-x-2 disabled:opacity-70 font-heading"
+              className="w-full mt-3 py-3 px-4 bg-gradient-to-r from-[#FFD400] via-[#FF8C00] to-[#FF5F00] hover:opacity-95 text-black font-extrabold rounded-xl text-sm shadow-lg shadow-[#FF8C00]/25 transition-all flex items-center justify-center space-x-2 disabled:opacity-70 font-heading cursor-pointer"
             >
               {isLoading ? (
                 <span>Registering Educator...</span>
               ) : (
                 <>
                   <span>Register as Teacher</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-4 h-4 stroke-[2.5]" />
                 </>
               )}
             </button>
           </form>
 
           <div className="mt-6 pt-6 border-t border-white/5 text-center">
-            <p className="text-xs text-gray-400 font-small">
+            <p className="text-xs text-gray-400 font-roboto">
               Already registered?{' '}
-              <Link to="/login" className="text-brand font-semibold hover:underline">
+              <Link to="/login" className="text-[#FFC300] font-semibold hover:underline">
                 Sign in here
               </Link>
             </p>
