@@ -8,14 +8,14 @@ export default {
     extend: {
       colors: {
         brand: {
-          DEFAULT: '#FF8C00',
-          gold: '#FFD400',
-          amber: '#FFC300',
-          orange: '#FF8C00',
-          flame: '#FF5F00',
-          hover: '#FF5F00',
-          light: '#FFF9E6',
-          dark: '#FF5F00',
+          DEFAULT: '#FFBF00', // Canonical Pure Amber (from user swatch #FFBF00)
+          amber: '#FFBF00',
+          gold: '#FFC82E',
+          soft: '#FFE28A',
+          hover: '#E5A900',
+          dark: '#D97706',
+          light: '#FFFBEB',
+          glow: 'rgba(255, 191, 0, 0.3)',
         },
         dark: {
           black: '#090A0F',

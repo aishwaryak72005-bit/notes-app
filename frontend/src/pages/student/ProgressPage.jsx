@@ -188,8 +188,8 @@ const ProgressPage = () => {
                   name="Score %"
                   stroke="#2563EB"
                   strokeWidth={3}
-                  dot={{ r: 4, fill: '#FFD400', stroke: '#0B0F17', strokeWidth: 2 }}
-                  activeDot={{ r: 6, fill: '#FFD400' }}
+                  dot={{ r: 4, fill: '#FFBF00', stroke: '#0B0F17', strokeWidth: 2 }}
+                  activeDot={{ r: 6, fill: '#FFBF00' }}
                 />
               </LineChart>
             </ResponsiveContainer>

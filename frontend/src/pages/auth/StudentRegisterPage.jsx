@@ -54,11 +54,11 @@ const StudentRegisterPage = () => {
     <div className="min-h-screen bg-[#090A0F] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 selection:bg-brand selection:text-white">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <div className="inline-flex items-center justify-center space-x-3 mb-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-[#FFD400] via-[#FF8C00] to-[#FF5F00] rounded-2xl flex items-center justify-center text-black shadow-lg shadow-[#FF8C00]/25 border border-[#FFD400]/40">
+          <div className="w-12 h-12 bg-gradient-to-br from-[#FFE28A] via-[#FFBF00] to-[#D97706] rounded-2xl flex items-center justify-center text-black shadow-lg shadow-[#FFBF00]/30 border border-[#FFE28A]/40">
             <BookOpen className="w-6 h-6 stroke-[2.5]" />
           </div>
           <span className="text-3xl font-extrabold tracking-tight text-white font-heading">
-            Syntax<span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFD400] to-[#FF8C00]">Hawk</span>
+            Syntax<span className="text-[#FFBF00]">Hawk</span>
           </span>
         </div>
         <h2 className="text-xl font-bold text-white font-heading">Student Registration</h2>
@@ -196,7 +196,7 @@ const StudentRegisterPage = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-3 py-3 px-4 bg-gradient-to-r from-[#FFD400] via-[#FF8C00] to-[#FF5F00] hover:opacity-95 text-black font-extrabold rounded-xl text-sm shadow-lg shadow-[#FF8C00]/25 transition-all flex items-center justify-center space-x-2 disabled:opacity-70 font-heading cursor-pointer"
+              className="w-full mt-3 py-3 px-4 bg-gradient-to-r from-[#FFE28A] via-[#FFBF00] to-[#D97706] hover:opacity-95 text-black font-extrabold rounded-xl text-sm shadow-lg shadow-[#FFBF00]/25 transition-all flex items-center justify-center space-x-2 disabled:opacity-70 font-heading cursor-pointer"
             >
               {isLoading ? (
                 <span>Registering Account...</span>
@@ -212,7 +212,7 @@ const StudentRegisterPage = () => {
           <div className="mt-6 pt-6 border-t border-white/5 text-center">
             <p className="text-xs text-gray-400 font-roboto">
               Already have an account?{' '}
-              <Link to="/login" className="text-[#FFC300] font-semibold hover:underline">
+              <Link to="/login" className="text-[#FFBF00] font-semibold hover:underline">
                 Sign in here
               </Link>
             </p>
